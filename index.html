@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão - Serviços</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #dee2e6;
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 18px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -3px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+        .produto-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .produto-item select,
+        .produto-item input {
+            flex: 1;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        h3 {
+            color: #495057;
+            margin: 25px 0 15px 0;
+            font-size: 1.3em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗Gestão</h1>
+            <p></p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="tab" onclick="showTab('estoque')">Estoque</button>
+            <button class="tab" onclick="showTab('servicos')">Serviços</button>
+            <button class="tab" onclick="showTab('orcamentos')">Orçamentos</button>
+            <button class="tab" onclick="showTab('relatorios')">Relatórios</button>
+        </div>
+
+        <div class="content">
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="section active">
+                <h2>Dashboard</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 id="totalServicos">0</h3>
+                        <p>Serviços Realizados</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="totalReceita">R$ 0,00</h3>
+                        <p>Receita Total</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="totalProdutos">0</h3>
+                        <p>Produtos em Estoque</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="orcamentosAtivos">0</h3>
+                        <p>Orçamentos Pendentes</p>
+                    </div>
+                </div>
+
+                <div id="alertaEstoque"></div>
+
+                <h3>Últimos Serviços</h3>
+                <table id="ultimosServicos">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- ESTOQUE -->
+            <div id="estoque" class="section">
+                <h2>Gerenciar Estoque</h2>
+                <div class="card">
+                    <h3>Adicionar Produto</h3>
+                    <div class="form-group">
+                        <label>Nome do Produto</label>
+                        <input type="text" id="nomeProduto" placeholder="Ex: Cera Automotiva">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Quantidade</label>
+                            <input type="number" id="qtdProduto" placeholder="Ex: 5" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Unidade</label>
+                            <select id="unidadeProduto">
+                                <option>Unidade</option>
+                                <option>Litro</option>
+                                <option>Kg</option>
+                                <option>ML</option>
+                                <option>Pacote</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Preço Unitário (R$)</label>
+                            <input type="number" id="precoProduto" step="0.01" placeholder="Ex: 35.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Estoque Mínimo</label>
+                            <input type="number" id="estoqueMinimo" placeholder="Ex: 2" step="0.1">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="adicionarProduto()">Adicionar Produto</button>
+                </div>
+
+                <h3>Produtos em Estoque</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Quantidade</th>
+                            <th>Preço Unit.</th>
+                            <th>Valor Total</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaEstoque"></tbody>
+                </table>
+            </div>
+
+            <!-- SERVIÇOS -->
+            <div id="servicos" class="section">
+                <h2>Registrar Serviço</h2>
+                <div class="card">
+                    <h3>Novo Serviço</h3>
+                    <div class="form-group">
+                        <label>Data do Serviço</label>
+                        <input type="date" id="dataServico">
+                    </div>
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <input type="text" id="clienteServico" placeholder="Nome do cliente">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Serviço</label>
+                        <select id="tipoServico">
+                            <option>Polimento de Carro</option>
+                            <option>Limpeza de Calçada</option>
+                            <option>Lavagem de Sofá</option>
+                            <option>Polimento + Lavagem</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Endereço</label>
+                        <input type="text" id="enderecoServico" placeholder="Endereço do serviço">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Cobrado (R$)</label>
+                        <input type="number" id="valorServico" step="0.01" placeholder="Ex: 150.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Produtos Utilizados</label>
+                        <div id="produtosUtilizados"></div>
+                        <button class="btn btn-success" style="margin-top: 10px;" onclick="adicionarProdutoServico()">+ Adicionar Produto</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Observações</label>
+                        <textarea id="obsServico" placeholder="Detalhes do serviço..."></textarea>
+                    </div>
+                    <button class="btn" onclick="registrarServico()">Registrar Serviço</button>
+                </div>
+
+                <h3>Histórico de Serviços</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaServicos"></tbody>
+                </table>
+            </div>
+
+            <!-- ORÇAMENTOS -->
+            <div id="orcamentos" class="section">
+                <h2>Orçamentos</h2>
+                <div class="card">
+                    <h3>Novo Orçamento</h3>
+                    <div class="form-group">
+                        <label>Data</label>
+                        <input type="date" id="dataOrcamento">
+                    </div>
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <input type="text" id="clienteOrcamento" placeholder="Nome do cliente">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="text" id="telefoneOrcamento" placeholder="(00) 00000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Serviço</label>
+                        <select id="tipoOrcamento">
+                            <option>Polimento de Carro</option>
+                            <option>Limpeza de Calçada</option>
+                            <option>Lavagem de Sofá</option>
+                            <option>Polimento + Lavagem</option>
+                            <option>Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor do Orçamento (R$)</label>
+                        <input type="number" id="valorOrcamento" step="0.01" placeholder="Ex: 200.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="statusOrcamento">
+                            <option>Pendente</option>
+                            <option>Aprovado</option>
+                            <option>Recusado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Observações</label>
+                        <textarea id="obsOrcamento" placeholder="Detalhes do orçamento..."></textarea>
+                    </div>
+                    <button class="btn" onclick="criarOrcamento()">Criar Orçamento</button>
+                </div>
+
+                <h3>Lista de Orçamentos</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Telefone</th>
+                            <th>Serviço</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaOrcamentos"></tbody>
+                </table>
+            </div>
+
+            <!-- RELATÓRIOS -->
+            <div id="relatorios" class="section">
+                <h2>Relatórios</h2>
+                <div class="form-row" style="margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label>Data Início</label>
+                        <input type="date" id="dataInicio">
+                    </div>
+                    <div class="form-group">
+                        <label>Data Fim</label>
+                        <input type="date" id="dataFim">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="btn" onclick="gerarRelatorio()">Gerar Relatório</button>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 id="relServicos">0</h3>
+                        <p>Serviços no Período</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="relReceita">R$ 0,00</h3>
+                        <p>Receita no Período</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="relGastos">R$ 0,00</h3>
+                        <p>Gastos com Produtos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="relLucro">R$ 0,00</h3>
+                        <p>Lucro Estimado</p>
+                    </div>
+                </div>
+
+                <h3>Detalhamento por Serviço</h3>
+                <table id="tabelaRelatorio">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Serviço</th>
+                            <th>Quantidade</th>
+                            <th>Receita Total</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let estoque = [];
+        let servicos = [];
+        let orcamentos = [];
+        let contadorProdutosServico = 0;
+
+        function showTab(tabName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'dashboard') {
+                atualizarDashboard();
+            }
+        }
+
+        function adicionarProduto() {
+            const nome = document.getElementById('nomeProduto').value.trim();
+            const qtd = parseFloat(document.getElementById('qtdProduto').value);
+            const unidade = document.getElementById('unidadeProduto').value;
+            const preco = parseFloat(document.getElementById('precoProduto').value);
+            const minimo = parseFloat(document.getElementById('estoqueMinimo').value) || 0;
+
+            if (!nome || isNaN(qtd) || qtd <= 0 || isNaN(preco) || preco <= 0) {
+                alert('Preencha todos os campos obrigatórios com valores válidos!');
+                return;
+            }
+
+            estoque.push({
+                id: Date.now(),
+                nome,
+                quantidade: qtd,
+                unidade,
+                preco,
+                estoqueMinimo: minimo
+            });
+
+            document.getElementById('nomeProduto').value = '';
+            document.getElementById('qtdProduto').value = '';
+            document.getElementById('precoProduto').value = '';
+            document.getElementById('estoqueMinimo').value = '';
+
+            atualizarTabelaEstoque();
+            atualizarDashboard();
+            alert('Produto adicionado com sucesso!');
+        }
+
+        function atualizarTabelaEstoque() {
+            const tbody = document.getElementById('tabelaEstoque');
+            tbody.innerHTML = '';
+
+            estoque.forEach(p => {
+                const tr = document.createElement('tr');
+                if (p.quantidade <= p.estoqueMinimo) {
+                    tr.style.background = '#ffebee';
+                }
+                tr.innerHTML = `
+                    <td><strong>${p.nome}</strong></td>
+                    <td>${p.quantidade.toFixed(2)} ${p.unidade}</td>
+                    <td>R$ ${p.preco.toFixed(2)}</td>
+                    <td>R$ ${(p.quantidade * p.preco).toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-success btn-small" onclick="ajustarEstoque(${p.id}, 1)">+1</button>
+                        <button class="btn btn-danger btn-small" onclick="ajustarEstoque(${p.id}, -1)">-1</button>
+                        <button class="btn btn-danger btn-small" onclick="removerProduto(${p.id})">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function ajustarEstoque(id, delta) {
+            const produto = estoque.find(p => p.id === id);
+            if (produto) {
+                produto.quantidade = Math.max(0, produto.quantidade + delta);
+                atualizarTabelaEstoque();
+                atualizarDashboard();
+            }
+        }
+
+        function removerProduto(id) {
+            if (confirm('Deseja realmente excluir este produto?')) {
+                estoque = estoque.filter(p => p.id !== id);
+                atualizarTabelaEstoque();
+                atualizarDashboard();
+            }
+        }
+
+        function adicionarProdutoServico() {
+            if (estoque.length === 0) {
+                alert('Adicione produtos ao estoque primeiro!');
+                return;
+            }
+
+            const container = document.getElementById('produtosUtilizados');
+            const div = document.createElement('div');
+            div.className = 'produto-item';
+            
+            let options = '<option value="">Selecione um produto</option>';
+            estoque.forEach(p => {
+                options += `<option value="${p.id}">${p.nome} (Disponível: ${p.quantidade.toFixed(2)} ${p.unidade})</option>`;
+            });
+
+            div.innerHTML = `
+                <select onchange="atualizarQtdMaxima(this)">${options}</select>
+                <input type="number" placeholder="Quantidade" step="0.1" min="0">
+                <button class="btn btn-danger btn-small" onclick="this.parentElement.remove()">X</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function atualizarQtdMaxima(select) {
+            const produtoId = parseInt(select.value);
+            const produto = estoque.find(p => p.id === produtoId);
+            if (produto) {
+                const input = select.nextElementSibling;
+                input.max = produto.quantidade;
+                input.placeholder = `Máx: ${produto.quantidade.toFixed(2)}`;
+            }
+        }
+
+        function registrarServico() {
+            const data = document.getElementById('dataServico').value;
+            const cliente = document.getElementById('clienteServico').value.trim();
+            const tipo = document.getElementById('tipoServico').value;
+            const endereco = document.getElementById('enderecoServico').value.trim();
+            const valor = parseFloat(document.getElementById('valorServico').value);
+            const obs = document.getElementById('obsServico').value.trim();
+
+            if (!data || !cliente || isNaN(valor) || valor <= 0) {
+                alert('Preencha os campos obrigatórios (Data, Cliente e Valor)!');
+                return;
+            }
+
+            const produtosUsados = [];
+            const container = document.getElementById('produtosUtilizados');
+            const items = container.querySelectorAll('.produto-item');
+            
+            let erroEstoque = false;
+            items.forEach(item => {
+                const select = item.querySelector('select');
+                const input = item.querySelector('input');
+                const produtoId = parseInt(select.value);
+                const qtd = parseFloat(input.value);
+
+                if (produtoId && qtd > 0) {
+                    const produto = estoque.find(p => p.id === produtoId);
+                    if (produto) {
+                        if (qtd > produto.quantidade) {
+                            alert(`Quantidade insuficiente de ${produto.nome}! Disponível: ${produto.quantidade.toFixed(2)}`);
+                            erroEstoque = true;
+                            return;
+                        }
+                        produtosUsados.push({
+                            id: produtoId,
+                            nome: produto.nome,
+                            quantidade: qtd,
+                            preco: produto.preco
+                        });
+                    }
+                }
+            });
+
+            if (erroEstoque) return;
+
+            produtosUsados.forEach(pu => {
+                const produto = estoque.find(p => p.id === pu.id);
+                if (produto) {
+                    produto.quantidade -= pu.quantidade;
+                }
+            });
+
+            servicos.push({
+                id: Date.now(),
+                data,
+                cliente,
+                tipo,
+                endereco,
+                valor,
+                obs,
+                produtos: produtosUsados
+            });
+
+            document.getElementById('dataServico').valueAsDate = new Date();
+            document.getElementById('clienteServico').value = '';
+            document.getElementById('enderecoServico').value = '';
+            document.getElementById('valorServico').value = '';
+            document.getElementById('obsServico').value = '';
+            container.innerHTML = '';
+
+            atualizarTabelaEstoque();
+            atualizarTabelaServicos();
+            atualizarDashboard();
+            alert('Serviço registrado com sucesso!');
+        }
+
+        function atualizarTabelaServicos() {
+            const tbody = document.getElementById('tabelaServicos');
+            tbody.innerHTML = '';
+
+            servicos.slice().reverse().forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${new Date(s.data).toLocaleDateString('pt-BR')}</td>
+                    <td>${s.cliente}</td>
+                    <td>${s.tipo}</td>
+                    <td><strong>R$ ${s.valor.toFixed(2)}</strong></td>
+                    <td>
+                        <button class="btn btn-small" onclick="verDetalhes(${s.id})">Detalhes</button>
+                        <button class="btn btn-danger btn-small" onclick="excluirServico(${s.id})">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function verDetalhes(id) {
+            const servico = servicos.find(s => s.id === id);
+            if (servico) {
+                let msg = `📋 DETALHES DO SERVIÇO\n\n`;
+                msg += `Cliente: ${servico.cliente}\n`;
+                msg += `Data: ${new Date(servico.data).toLocaleDateString('pt-BR')}\n`;
+                msg += `Endereço: ${servico.endereco || 'Não informado'}\n`;
+                msg += `Tipo: ${servico.tipo}\n`;
+                msg += `Valor: R$ ${servico.valor.toFixed(2)}\n`;
+                
+                if (servico.produtos.length > 0) {
+                    msg += `\n🧴 PRODUTOS UTILIZADOS:\n`;
+                    servico.produtos.forEach(p => {
+                        msg += `• ${p.nome}: ${p.quantidade.toFixed(2)} (Custo: R$ ${(p.quantidade * p.preco).toFixed(2)})\n`;
+                    });
+                }
+                
+                if (servico.obs) {
+                    msg += `\n📝 OBSERVAÇÕES:\n${servico.obs}`;
+                }
+                
+                alert(msg);
+            }
+        }
+
+        function excluirServico(id) {
+            if (confirm('Deseja realmente excluir este serviço?')) {
+                servicos = servicos.filter(s => s.id !== id);
+                atualizarTabelaServicos();
+                atualizarDashboard();
+            }
+        }
+
+        function criarOrcamento() {
+            const data = document.getElementById('dataOrcamento').value;
+            const cliente = document.getElementById('clienteOrcamento').value.trim();
+            const telefone = document.getElementById('telefoneOrcamento').value.trim();
+            const tipo = document.getElementById('tipoOrcamento').value;
+            const valor = parseFloat(document.getElementById('valorOrcamento').value);
+            const status = document.getElementById('statusOrcamento').value;
+            const obs = document.getElementById('obsOrcamento').value.trim();
+
+            if (!data || !cliente || isNaN(valor) || valor <= 0) {
+                alert('Preencha os campos obrigatórios (Data, Cliente e Valor)!');
+                return;
+            }
+
+            orcamentos.push({
+                id: Date.now(),
+                data,
+                cliente,
+                telefone,
+                tipo,
+                valor,
+                status,
+                obs
+            });
+
+            document.getElementById('dataOrcamento').valueAsDate = new Date();
+            document.getElementById('clienteOrcamento').value = '';
+            document.getElementById('telefoneOrcamento').value = '';
+            document.getElementById('valorOrcamento').value = '';
+            document.getElementById('obsOrcamento').value = '';
+
+            atualizarTabelaOrcamentos();
+            atualizarDashboard();
+            alert('Orçamento criado com sucesso!');
+        }
+
+        function atualizarTabelaOrcamentos() {
+            const tbody = document.getElementById('tabelaOrcamentos');
+            tbody.innerHTML = '';
+
+            orcamentos.slice().reverse().forEach(o => {
+                const tr = document.createElement('tr');
+                let corStatus = o.status === 'Pendente' ? '#fff3cd' : o.status === 'Aprovado' ? '#d4edda' : '#f8d7da';
+                tr.style.background = corStatus;
+                tr.innerHTML = `
+                    <td>${new Date(o.data).toLocaleDateString('pt-BR')}</td>
+                    <td>${o.cliente}</td>
+                    <td>${o.telefone || '-'}</td>
+                    <td>${o.tipo}</td>
+                    <td><strong>R$ ${o.valor.toFixed(2)}</strong></td>
+                    <td><strong>${o.status}</strong></td>
+                    <td>
+                        <button class="btn btn-small" onclick="verOrcamento(${o.id})">Ver</button>
+                        <button class="btn btn-danger btn-small" onclick="excluirOrcamento(${o.id})">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function verOrcamento(id) {
+            const orc = orcamentos.find(o => o.id === id);
+            if (orc) {
+                let msg = `💼 DETALHES DO ORÇAMENTO\n\n`;
+                msg += `Cliente: ${orc.cliente}\n`;
+                msg += `Telefone: ${orc.telefone || 'Não informado'}\n`;
+                msg += `Data: ${new Date(orc.data).toLocaleDateString('pt-BR')}\n`;
+                msg += `Tipo: ${orc.tipo}\n`;
+                msg += `Valor: R$ ${orc.valor.toFixed(2)}\n`;
+                msg += `Status: ${orc.status}\n`;
+                if (orc.obs) {
+                    msg += `\n📝 OBSERVAÇÕES:\n${orc.obs}`;
+                }
+                alert(msg);
+            }
+        }
+
+        function excluirOrcamento(id) {
+            if (confirm('Deseja realmente excluir este orçamento?')) {
+                orcamentos = orcamentos.filter(o => o.id !== id);
+                atualizarTabelaOrcamentos();
+                atualizarDashboard();
+            }
+        }
+
+        function atualizarDashboard() {
+            document.getElementById('totalServicos').textContent = servicos.length;
+            
+            const receita = servicos.reduce((sum, s) => sum + s.valor, 0);
+            document.getElementById('totalReceita').textContent = `R$ ${receita.toFixed(2)}`;
+            
+            document.getElementById('totalProdutos').textContent = estoque.length;
+            
+            const pendentes = orcamentos.filter(o => o.status === 'Pendente').length;
+            document.getElementById('orcamentosAtivos').textContent = pendentes;
+
+            const alertaDiv = document.getElementById('alertaEstoque');
+            const baixoEstoque = estoque.filter(p => p.quantidade <= p.estoqueMinimo);
+            
+            if (baixoEstoque.length > 0) {
+                alertaDiv.innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Atenção!</strong> ${baixoEstoque.length} produto(s) com estoque baixo:
+                        ${baixoEstoque.map(p => `<br>• ${p.nome} (${p.quantidade.toFixed(2)} ${p.unidade})`).join('')}
+                    </div>
+                `;
+            } else {
+                alertaDiv.innerHTML = '';
+            }
+
+            const tbody = document.getElementById('ultimosServicos').querySelector('tbody');
+            tbody.innerHTML = '';
+            const ultimos = servicos.slice(-5).reverse();
+            
+            if (ultimos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">Nenhum serviço registrado ainda</td></tr>';
+            } else {
+                ultimos.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${new Date(s.data).toLocaleDateString('pt-BR')}</td>
+                        <td>${s.cliente}</td>
+                        <td>${s.tipo}</td>
+                        <td><strong>R$ ${s.valor.toFixed(2)}</strong></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function gerarRelatorio() {
+            const inicio = document.getElementById('dataInicio').value;
+            const fim = document.getElementById('dataFim').value;
+
+            if (!inicio || !fim) {
+                alert('Selecione o período para o relatório!');
+                return;
+            }
+
+            if (inicio > fim) {
+                alert('A data de início não pode ser maior que a data de fim!');
+                return;
+            }
+
+            const servicosFiltrados = servicos.filter(s => {
+                return s.data >= inicio && s.data <= fim;
+            });
+
+            const totalServicos = servicosFiltrados.length;
+            const receita = servicosFiltrados.reduce((sum, s) => sum + s.valor, 0);
+            
+            let gastos = 0;
+            servicosFiltrados.forEach(s => {
+                s.produtos.forEach(p => {
+                    gastos += p.quantidade * p.preco;
+                });
+            });
+
+            const lucro = receita - gastos;
+
+            document.getElementById('relServicos').textContent = totalServicos;
+            document.getElementById('relReceita').textContent = `R$ ${receita.toFixed(2)}`;
+            document.getElementById('relGastos').textContent = `R$ ${gastos.toFixed(2)}`;
+            document.getElementById('relLucro').textContent = `R$ ${lucro.toFixed(2)}`;
+
+            const porTipo = {};
+            servicosFiltrados.forEach(s => {
+                if (!porTipo[s.tipo]) {
+                    porTipo[s.tipo] = { qtd: 0, valor: 0 };
+                }
+                porTipo[s.tipo].qtd++;
+                porTipo[s.tipo].valor += s.valor;
+            });
+
+            const tbody = document.getElementById('tabelaRelatorio').querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            if (Object.keys(porTipo).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #999;">Nenhum serviço encontrado no período selecionado</td></tr>';
+            } else {
+                Object.keys(porTipo).forEach(tipo => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${tipo}</strong></td>
+                        <td>${porTipo[tipo].qtd}</td>
+                        <td><strong>R$ ${porTipo[tipo].valor.toFixed(2)}</strong></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('dataServico').valueAsDate = new Date();
+            document.getElementById('dataOrcamento').valueAsDate = new Date();
+            
+            const hoje = new Date();
+            const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+            document.getElementById('dataInicio').valueAsDate = primeiroDia;
+            document.getElementById('dataFim').valueAsDate = hoje;
+
+            atualizarDashboard();
+        });
+    </script>
+</body>
+</html>
