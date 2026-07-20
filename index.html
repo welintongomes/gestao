@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestão do Negócio</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
 <style>
     :root {
         --paper: #eef1ed;
@@ -345,6 +346,8 @@
                 <div class="form-content">
                     
                     <!-- NOVO CAMPO: TIPO DE REGISTRO (RECEITA / DESPESA) -->
+                    <div class="form-content">
+                    
                     <div class="field">
                         <label>Tipo de Registro</label>
                         <select id="hour-flow">
@@ -359,10 +362,24 @@
                         <datalist id="employee-datalist"></datalist>
                     </div>
 
-                    <div class="form-row">
-                        <div class="field"><label>Data</label><input type="date" id="hour-date"></div>
-                        <div class="field"><label>Quantidade de horas</label><input type="number" id="hour-qty" placeholder="Ex: 8" min="0" step="0.25" oninput="updateHourLiveTotal()"></div>
+                    <div class="field"><label>Data</label><input type="date" id="hour-date"></div>
+
+                    <!-- NOVA CALCULADORA DE PONTO -->
+                    <div style="background: var(--bg-color); border: 1px dashed var(--border); padding: 10px; border-radius: 6px; margin-bottom: 14px;">
+                        <label style="font-weight: bold; margin-bottom: 8px; display: block; font-size: 13px;">⏱️ Calculadora de Ponto (Opcional)</label>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div class="field" style="margin:0;"><label>Entrada</label><input type="time" id="hour-time-in" oninput="calculateTimeDiff()"></div>
+                            <div class="field" style="margin:0;"><label>Saída</label><input type="time" id="hour-time-out" oninput="calculateTimeDiff()"></div>
+                            <div class="field" style="margin:0;"><label>Ida Almoço</label><input type="time" id="hour-lunch-start" oninput="calculateTimeDiff()"></div>
+                            <div class="field" style="margin:0;"><label>Volta Almoço</label><input type="time" id="hour-lunch-end" oninput="calculateTimeDiff()"></div>
+                        </div>
+                        <div class="field" style="margin: 8px 0 0 0;"><label>Pausa / Café (minutos)</label><input type="number" id="hour-coffee" placeholder="Ex: 15" min="0" oninput="calculateTimeDiff()"></div>
                     </div>
+
+                    <!-- O campo de quantidade continua aqui para exibir o resultado ou digitar manualmente -->
+                    <div class="field"><label>Total de Horas Calculadas</label><input type="number" id="hour-qty" placeholder="Ex: 8 ou 8.5" min="0" step="0.01" oninput="updateHourLiveTotal()" style="background-color: rgba(0,0,0,0.05); font-weight: bold;"></div>
+                    
                     <div class="field"><label>Valor cobrado/pago por hora (R$)</label><input type="number" id="hour-rate" placeholder="Ex: 25.00" min="0" step="0.01" oninput="updateHourLiveTotal()"></div>
                     <div class="live-total" id="hour-live-total">Total: R$ 0,00</div>
                     <div class="field"><label>Observações (opcional)</label><textarea id="hour-notes" rows="2" placeholder="Ex: Turno extra, projeto X..."></textarea></div>
@@ -1047,6 +1064,54 @@
     // ==========================================
     // HORAS TRABALHADAS
     // ==========================================
+    // ==========================================
+    // CALCULADORA DE PONTO (CONVERSÃO DE TEMPO)
+    // ==========================================
+    function timeToMinutes(timeStr) {
+        if (!timeStr) return 0;
+        const [h, m] = timeStr.split(':').map(Number);
+        return (h * 60) + m;
+    }
+
+    function calculateTimeDiff() {
+        const tIn = document.getElementById('hour-time-in').value;
+        const tOut = document.getElementById('hour-time-out').value;
+        const lStart = document.getElementById('hour-lunch-start').value;
+        const lEnd = document.getElementById('hour-lunch-end').value;
+        const coffee = parseInt(document.getElementById('hour-coffee').value) || 0;
+
+        // Só calcula se tiver pelo menos a entrada e a saída
+        if (!tIn || !tOut) return;
+
+        let minsIn = timeToMinutes(tIn);
+        let minsOut = timeToMinutes(tOut);
+        
+        // Se a saída for menor que a entrada (ex: entrou 22:00 e saiu 06:00 do outro dia)
+        if (minsOut < minsIn) minsOut += 24 * 60;
+
+        let totalMins = minsOut - minsIn;
+
+        // Subtrai o almoço
+        if (lStart && lEnd) {
+            let minsLStart = timeToMinutes(lStart);
+            let minsLEnd = timeToMinutes(lEnd);
+            if (minsLEnd < minsLStart) minsLEnd += 24 * 60;
+            
+            let lunchMins = minsLEnd - minsLStart;
+            totalMins -= lunchMins;
+        }
+
+        // Subtrai os minutos do café
+        totalMins -= coffee;
+        if (totalMins < 0) totalMins = 0;
+
+        // Converte os minutos em horas decimais exatas (Ex: 1h30m vira 1.5)
+        const decimalHours = totalMins / 60;
+        
+        // Atualiza o campo principal de horas e já dispara o cálculo de dinheiro
+        document.getElementById('hour-qty').value = decimalHours.toFixed(2);
+        updateHourLiveTotal();
+    }
     function updateHourLiveTotal() {
         const hours = parseFloat(document.getElementById('hour-qty').value) || 0;
         const rate = parseFloat(document.getElementById('hour-rate').value) || 0;
@@ -1054,19 +1119,35 @@
     }
 
 async function saveWorkHour() {
-        const flow = document.getElementById('hour-flow').value; // Pega se é entrada ou saída
+        const flow = document.getElementById('hour-flow').value;
         const employee = document.getElementById('hour-employee').value.trim();
         const date = document.getElementById('hour-date').value || todayISO();
         const hours = parseFloat(document.getElementById('hour-qty').value);
         const rate = parseFloat(document.getElementById('hour-rate').value);
         const notes = document.getElementById('hour-notes').value.trim();
         
+        const timeIn = document.getElementById('hour-time-in').value;
+        const timeOut = document.getElementById('hour-time-out').value;
+        const lunchStart = document.getElementById('hour-lunch-start').value;
+        const lunchEnd = document.getElementById('hour-lunch-end').value;
+        const coffee = document.getElementById('hour-coffee').value;
+
         if (!employee) return showToast('Informe o nome do funcionário ou cliente.', 'error');
         if (!hours || hours <= 0) return showToast('Informe uma quantidade de horas válida.', 'error');
         if (isNaN(rate) || rate < 0) return showToast('Informe o valor da hora.', 'error');
 
-        // Salvando o campo "flow" (income = receita, expense = despesa)
-        const data = { flow, employee, date, hours, hourlyRate: rate, total: round2(hours * rate), notes };
+        // ==== NOVIDADE: Tira uma "foto" do formulário e salva na memória do navegador ====
+        const formCache = {
+            flow, employee, date, hours, rate, notes,
+            timeIn, timeOut, lunchStart, lunchEnd, coffee
+        };
+        localStorage.setItem('lastWorkHourEntry', JSON.stringify(formCache));
+        // ==================================================================================
+
+        const data = { 
+            flow, employee, date, hours, hourlyRate: rate, total: round2(hours * rate), notes,
+            timeIn, timeOut, lunchStart, lunchEnd, coffee
+        };
         
         try {
             await runTx(['workHours'], 'readwrite', (tx) => {
@@ -1078,19 +1159,26 @@ async function saveWorkHour() {
             showToast('Horas registradas com sucesso.');
         } catch (err) { console.error(err); showToast('Erro ao salvar horas.', 'error'); }
     }
-
     function editWorkHour(id) {
         const h = allWorkHours.find(x => x.id === id);
         if (!h) return;
         switchTab('horas');
         document.getElementById('hour-form-accordion').open = true;
-        // Se for um registro antigo sem 'flow', assumimos que é receita ('income')
+        
         document.getElementById('hour-flow').value = h.flow || 'income'; 
         document.getElementById('hour-employee').value = h.employee || 'Geral';
         document.getElementById('hour-date').value = h.date;
         document.getElementById('hour-qty').value = h.hours;
         document.getElementById('hour-rate').value = h.hourlyRate;
         document.getElementById('hour-notes').value = h.notes || '';
+        
+        // Puxa os horários de volta se existirem
+        document.getElementById('hour-time-in').value = h.timeIn || '';
+        document.getElementById('hour-time-out').value = h.timeOut || '';
+        document.getElementById('hour-lunch-start').value = h.lunchStart || '';
+        document.getElementById('hour-lunch-end').value = h.lunchEnd || '';
+        document.getElementById('hour-coffee').value = h.coffee || '';
+
         updateHourLiveTotal();
         editingHourId = id;
         document.getElementById('hour-form-title').textContent = '✏️ Editando Horas';
@@ -1100,19 +1188,56 @@ async function saveWorkHour() {
 
     function cancelHourEdit() {
         editingHourId = null;
-        document.getElementById('hour-flow').value = 'income';
-        document.getElementById('hour-employee').value = currentEmployeeFilter !== 'todos' ? currentEmployeeFilter : '';
-        document.getElementById('hour-date').value = todayISO();
-        document.getElementById('hour-qty').value = '';
-        document.getElementById('hour-rate').value = '';
-        document.getElementById('hour-notes').value = '';
+        
+        // ==== NOVIDADE: Tenta buscar o último preenchimento ====
+        let lastEntry = null;
+        try {
+            const saved = localStorage.getItem('lastWorkHourEntry');
+            if (saved) lastEntry = JSON.parse(saved);
+        } catch(e) {}
+
+        if (lastEntry) {
+            // Se encontrou dados salvos, preenche tudo com eles
+            document.getElementById('hour-flow').value = lastEntry.flow || 'income';
+            
+            // Se você filtrou por um botão específico (ex: João), ele prioriza o João. Se não, pega o último.
+            if (currentEmployeeFilter !== 'todos') {
+                document.getElementById('hour-employee').value = currentEmployeeFilter;
+            } else {
+                document.getElementById('hour-employee').value = lastEntry.employee || '';
+            }
+            
+            document.getElementById('hour-date').value = lastEntry.date || todayISO();
+            document.getElementById('hour-qty').value = lastEntry.hours || '';
+            document.getElementById('hour-rate').value = lastEntry.rate || '';
+            document.getElementById('hour-notes').value = lastEntry.notes || '';
+            document.getElementById('hour-time-in').value = lastEntry.timeIn || '';
+            document.getElementById('hour-time-out').value = lastEntry.timeOut || '';
+            document.getElementById('hour-lunch-start').value = lastEntry.lunchStart || '';
+            document.getElementById('hour-lunch-end').value = lastEntry.lunchEnd || '';
+            document.getElementById('hour-coffee').value = lastEntry.coffee || '';
+        } else {
+            // Se for a primeira vez usando o app, deixa padrão/vazio
+            document.getElementById('hour-flow').value = 'income';
+            document.getElementById('hour-employee').value = currentEmployeeFilter !== 'todos' ? currentEmployeeFilter : '';
+            document.getElementById('hour-date').value = todayISO();
+            document.getElementById('hour-qty').value = '';
+            document.getElementById('hour-rate').value = '';
+            document.getElementById('hour-notes').value = '';
+            document.getElementById('hour-time-in').value = '';
+            document.getElementById('hour-time-out').value = '';
+            document.getElementById('hour-lunch-start').value = '';
+            document.getElementById('hour-lunch-end').value = '';
+            document.getElementById('hour-coffee').value = '';
+        }
+
         updateHourLiveTotal();
         document.getElementById('hour-form-title').textContent = '➕ Registrar Horas';
         document.getElementById('btn-save-hour').textContent = 'Salvar Horas';
         document.getElementById('btn-cancel-hour').style.display = 'none';
         document.getElementById('hour-form-accordion').open = false;
     }
-
+    
     function renderHourRowHTML(h) {
         // Verifica se é despesa para mudar a cor e o sinal (- vermelho, + verde)
         const isExpense = h.flow === 'expense';
@@ -2613,6 +2738,19 @@ function buildHistoryEntries() {
     function closeBackupModal() {
         document.getElementById('backup-modal').style.display = 'none';
     }
+    // ==========================================
+    // INICIALIZAÇÃO AUTOMÁTICA AO RECARREGAR A PÁGINA
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+        // Assim que a página terminar de desenhar o HTML,
+        // acionamos a função para preencher o formulário de horas
+        // com o último registro salvo na memória do navegador.
+        try {
+            cancelHourEdit();
+        } catch (e) {
+            console.error("Erro ao tentar preencher o formulário no carregamento:", e);
+        }
+    });
 </script>
 </body>
 </html>
