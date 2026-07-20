@@ -1245,11 +1245,22 @@ async function saveWorkHour() {
         const sign = isExpense ? '-' : '+';
         const icon = isExpense ? '🔴' : '🟢';
 
+        // Monta o bloco de detalhes de tempo visualmente destacado
+        let timeDetailsHTML = '';
+        if (h.timeIn && h.timeOut) {
+            timeDetailsHTML = `<div style="font-size: 11px; color: var(--text-color); opacity: 0.8; margin-top: 2px;">
+                ⏰ ${h.timeIn} às ${h.timeOut} 
+                ${h.lunchStart ? `| 🍲 ${h.lunchStart}-${h.lunchEnd}` : ''} 
+                ${h.coffee ? `| ☕ ${h.coffee}m` : ''}
+            </div>`;
+        }
+
         return `<div class="list-row">
             <div class="row-main">
                 <span class="row-date">${icon} ${escapeHTML(h.employee || 'Geral')} | 📅 ${formatDateBR(h.date)}</span>
                 <span class="row-title">${h.hours}h × ${formatCurrency(h.hourlyRate)}/h</span>
-                ${h.notes ? `<span class="row-subtitle">${escapeHTML(h.notes)}</span>` : ''}
+                ${timeDetailsHTML}
+                ${h.notes ? `<span class="row-subtitle" style="margin-top: 4px;">${escapeHTML(h.notes)}</span>` : ''}
             </div>
             <div class="row-side">
                 <span class="row-amount ${amountClass}">${sign}${formatCurrency(h.total)}</span>
@@ -2197,15 +2208,28 @@ function renderHoursList(resetScroll) {
 function buildHistoryEntries() {
         let seq = 0;
         const entries = [];
+        
+        // ==========================================
+        // 1. HORAS COM DETALHES DE ENTRADA E SAÍDA
+        // ==========================================
         allWorkHours.forEach(h => {
-            // MUDANÇA MATEMÁTICA: O valor passa a ser negativo para o Histórico se for despesa
             const realAmount = h.flow === 'expense' ? -h.total : h.total;
             const flowText = h.flow === 'expense' ? 'Despesa' : 'Receita';
             
+            // Monta o texto do relógio se os dados existirem
+            let timeText = '';
+            if (h.timeIn && h.timeOut) {
+                timeText = `⏰ ${h.timeIn} às ${h.timeOut}`;
+                if (h.lunchStart && h.lunchEnd) timeText += ` (Almoço: ${h.lunchStart}-${h.lunchEnd})`;
+                if (h.coffee) timeText += ` (Pausa: ${h.coffee}m)`;
+                timeText += ' • '; // Um separador bonitinho
+            }
+
             entries.push({
                 type: 'hora', id: h.id, date: h.date, seq: seq++,
                 title: `Horas (${h.employee || 'Geral'}) - ${flowText}`,
-                subtitle: `${h.hours}h × ${formatCurrency(h.hourlyRate)}/h${h.notes ? ' — ' + h.notes : ''}`,
+                // Adicionamos o timeText logo antes da quantidade de horas
+                subtitle: `${timeText}${h.hours}h × ${formatCurrency(h.hourlyRate)}/h${h.notes ? ' — ' + h.notes : ''}`,
                 amount: realAmount
             });
         });
@@ -2657,6 +2681,16 @@ function buildHistoryEntries() {
 
                 txtContent += `Data: ${formatDateBR(h.date)} | Func/Cliente: ${h.employee || 'Geral'}\n`;
                 txtContent += `Tipo: ${flowText}\n`;
+                
+                // === ADICIONADO: Detalhes do relógio (Entrada, Saída, Almoço e Café) ===
+                if (h.timeIn && h.timeOut) {
+                    let timeLine = `Horário: ${h.timeIn} às ${h.timeOut}`;
+                    if (h.lunchStart && h.lunchEnd) timeLine += ` \nAlmoço: ${h.lunchStart}-${h.lunchEnd}`;
+                    if (h.coffee) timeLine += ` \nPausa: ${h.coffee}m`;
+                    txtContent += `${timeLine}\n`;
+                }
+                // =======================================================================
+
                 txtContent += `Tempo: ${h.hours}h x ${formatCurrency(h.hourlyRate)}/h\n`;
                 txtContent += `Total: ${formatCurrency(val)}\n`;
                 if (h.notes) txtContent += `Obs: ${h.notes}\n`;
