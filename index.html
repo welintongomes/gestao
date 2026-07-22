@@ -277,7 +277,7 @@
         <span class="brand-icon">💼</span>
         <div>
             <h1>Gestão do Negócio</h1>
-            <p class="brand-sub">Horas, produtos, receitas e serviços — tudo em um só lugar</p>
+            <!-- <p class="brand-sub">Horas, produtos, receitas e serviços — tudo em um só lugar</p> -->
         </div>
     </div>
     <div class="header-balance-pill">
@@ -319,7 +319,7 @@
             <h2>🕓 Últimas movimentações</h2>
             
             <!-- Usando a classe virtual-scroll com um limite de max-height menor (ex: 320px) para a home -->
-            <div class="virtual-scroll" id="recent-scroll" style="max-height: 320px; margin-top: 12px;">
+            <div class="virtual-scroll" id="recent-scroll" style="max-height: 320px; margin: 10px 0px 10px 0px;">
                 <div class="empty-state" id="recent-empty-state">
                     <span class="empty-icon">🗒️</span>
                     <p>Nenhuma movimentação registrada ainda.</p>
@@ -335,6 +335,15 @@
     <div class="tab-panel" id="tab-horas">
         <div class="panel horas">
             <h2 id="horas-panel-title">⏱️ Horas Trabalhadas</h2>
+            <div class="virtual-scroll" id="hours-scroll" style="margin: 10px 0px 10px 0px;">
+                <div class="empty-state" id="hours-empty-state">
+                    <span class="empty-icon">⏱️</span>
+                    <p>Nenhuma hora registrada.<br>Registre seu primeiro turno acima.</p>
+                </div>
+                <div class="virtual-spacer" id="hours-top-spacer"></div>
+                <div class="virtual-viewport" id="hours-viewport"></div>
+                <div class="virtual-spacer" id="hours-bottom-spacer"></div>
+            </div>
             <p class="field-note" style="margin-bottom:10px;">Crie, edite, exporte, importe usuários, 🟢receita ou 🔴despesa</p>
             
             <!-- BOTÕES (PILLS) EXCLUSIVOS DOS FUNCIONÁRIOS -->
@@ -407,15 +416,7 @@
                 
             </div>
 
-            <div class="virtual-scroll" id="hours-scroll" style="margin-top:12px;">
-                <div class="empty-state" id="hours-empty-state">
-                    <span class="empty-icon">⏱️</span>
-                    <p>Nenhuma hora registrada.<br>Registre seu primeiro turno acima.</p>
-                </div>
-                <div class="virtual-spacer" id="hours-top-spacer"></div>
-                <div class="virtual-viewport" id="hours-viewport"></div>
-                <div class="virtual-spacer" id="hours-bottom-spacer"></div>
-            </div>
+            
         </div>
     </div>
 
@@ -423,8 +424,21 @@
     <div class="tab-panel" id="tab-produtos">
         <div class="panel produtos">
             <h2>📦 Produtos e Estoque</h2>
-            <p class="field-note" style="margin-bottom:10px;">Todos os produtos que você tem em estoque ficarão aqui, você pode, comprar mais, vende-los ou usar para produção. Vendendo ou produzindo eles serão abatidos do estoque.</p>
+            <div class="virtual-scroll" id="products-scroll" style="margin: 10px 0px 2px 0px;">
+                <div class="empty-state" id="products-empty-state">
+                    <span class="empty-icon">📦</span>
+                    <p>Nenhum produto cadastrado ainda.<br>Cadastre o primeiro produto acima.</p>
+                </div>
+                <div class="virtual-spacer" id="products-top-spacer"></div>
+                <div class="virtual-viewport" id="products-viewport"></div>
+                <div class="virtual-spacer" id="products-bottom-spacer"></div>
+            </div>
+                <p class="field-note" style="margin-bottom:10px;"> Todos os produtos, horas, e produções ficarão aqui.</p>
 
+                <!-- BOTÕES (PILLS) EXCLUSIVOS PARA AS CATEGORIAS DE PRODUTOS -->
+            <div class="filter-pills" id="category-pills" style="margin-bottom: 4px; margin-top: 14px;">
+                <!-- Preenchido automaticamente via JS -->
+            </div>
             <details id="product-form-accordion" class="form-accordion">
                 <summary id="product-form-title">➕ Novo Produto</summary>
                 <div class="form-content">
@@ -455,10 +469,7 @@
                 </div>
             </details>
 
-            <!-- BOTÕES (PILLS) EXCLUSIVOS PARA AS CATEGORIAS DE PRODUTOS -->
-            <div class="filter-pills" id="category-pills" style="margin-bottom: 4px; margin-top: 14px;">
-                <!-- Preenchido automaticamente via JS -->
-            </div>
+            
 
             <!-- ÁREA DE BUSCA E EXPORTAÇÃO (SÓ DE PRODUTOS) -->
             <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
@@ -477,15 +488,7 @@
                 
             </div>
 
-            <div class="virtual-scroll" id="products-scroll" style="margin-top:12px;">
-                <div class="empty-state" id="products-empty-state">
-                    <span class="empty-icon">📦</span>
-                    <p>Nenhum produto cadastrado ainda.<br>Cadastre o primeiro produto acima.</p>
-                </div>
-                <div class="virtual-spacer" id="products-top-spacer"></div>
-                <div class="virtual-viewport" id="products-viewport"></div>
-                <div class="virtual-spacer" id="products-bottom-spacer"></div>
-            </div>
+            
         </div>
     </div>
 
@@ -494,7 +497,15 @@
         <div class="panel producao">
             <h2>🍰 Fichas Técnicas (Receitas)</h2>
             <p class="field-note" style="margin-bottom:10px;">Monte a receita com os ingredientes (produtos já cadastrados) e as quantidades gastas. Ao salvar uma nova ficha, a primeira produção é feita automaticamente: o estoque dos ingredientes é debitado e o custo por unidade/fatia é calculado.</p>
-
+<div class="virtual-scroll" id="recipes-scroll" style="margin: 10px 0px 10px 0px;">
+                <div class="empty-state" id="recipes-empty-state">
+                    <span class="empty-icon">🍰</span>
+                    <p>Nenhuma ficha técnica ainda.<br>Crie a primeira receita acima.</p>
+                </div>
+                <div class="virtual-spacer" id="recipes-top-spacer"></div>
+                <div class="virtual-viewport" id="recipes-viewport"></div>
+                <div class="virtual-spacer" id="recipes-bottom-spacer"></div>
+            </div>
             <details id="recipe-form-accordion" class="form-accordion">
                 <summary id="recipe-form-title">➕ Nova Ficha Técnica</summary>
                 <div class="form-content">
@@ -532,15 +543,7 @@
                 <button class="clear-search-btn" id="clear-recipes-search" onclick="clearSearchRecipes()">✕</button>
             </div>
 
-            <div class="virtual-scroll" id="recipes-scroll" style="margin-top:12px;">
-                <div class="empty-state" id="recipes-empty-state">
-                    <span class="empty-icon">🍰</span>
-                    <p>Nenhuma ficha técnica ainda.<br>Crie a primeira receita acima.</p>
-                </div>
-                <div class="virtual-spacer" id="recipes-top-spacer"></div>
-                <div class="virtual-viewport" id="recipes-viewport"></div>
-                <div class="virtual-spacer" id="recipes-bottom-spacer"></div>
-            </div>
+            
         </div>
     </div>
 
@@ -548,7 +551,19 @@
     <div class="tab-panel" id="tab-servicos">
         <div class="panel servicos">
             <h2>🧰 Serviços Prestados</h2>
-
+<div class="virtual-scroll" id="services-scroll" style="margin: 10px 0px 10px 0px;">
+                <div class="empty-state" id="services-empty-state">
+                    <span class="empty-icon">🧰</span>
+                    <p>Nenhum serviço registrado ainda.<br>Registre o primeiro serviço acima.</p>
+                </div>
+                <div class="virtual-spacer" id="services-top-spacer"></div>
+                <div class="virtual-viewport" id="services-viewport"></div>
+                <div class="virtual-spacer" id="services-bottom-spacer"></div>
+            </div>
+            <!-- BOTÕES (PILLS) DOS CLIENTES -->
+            <div class="filter-pills" id="client-pills" style="margin-bottom: 4px; margin-top: 14px;">
+                <!-- Preenchido automaticamente via JS -->
+            </div>
             <details id="service-form-accordion" class="form-accordion">
                 <summary id="service-form-title">➕ Registrar Serviço</summary>
                 <div class="form-content">
@@ -577,10 +592,7 @@
                 </div>
             </details>
 
-            <!-- BOTÕES (PILLS) DOS CLIENTES -->
-            <div class="filter-pills" id="client-pills" style="margin-bottom: 4px; margin-top: 14px;">
-                <!-- Preenchido automaticamente via JS -->
-            </div>
+            
 
             <!-- ÁREA DE BUSCA E EXPORTAÇÃO (SÓ DE SERVIÇOS) -->
             <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
@@ -602,15 +614,7 @@
                 
             </div>
 
-            <div class="virtual-scroll" id="services-scroll" style="margin-top:12px;">
-                <div class="empty-state" id="services-empty-state">
-                    <span class="empty-icon">🧰</span>
-                    <p>Nenhum serviço registrado ainda.<br>Registre o primeiro serviço acima.</p>
-                </div>
-                <div class="virtual-spacer" id="services-top-spacer"></div>
-                <div class="virtual-viewport" id="services-viewport"></div>
-                <div class="virtual-spacer" id="services-bottom-spacer"></div>
-            </div>
+            
         </div>
     </div>
 
@@ -618,7 +622,24 @@
     <div class="tab-panel" id="tab-historico">
         <div class="panel">
             <h2>📜 Histórico de Movimentações</h2>
-
+<div class="virtual-scroll" id="history-scroll" style="margin: 10px 0px 10px 0px;">
+                <div class="empty-state" id="history-empty-state">
+                    <span class="empty-icon">📜</span>
+                    <p>Nenhuma movimentação encontrada.</p>
+                </div>
+                <div class="virtual-spacer" id="history-top-spacer"></div>
+                <div class="virtual-viewport" id="history-viewport"></div>
+                <div class="virtual-spacer" id="history-bottom-spacer"></div>
+            </div>
+            <div class="filter-pills" id="history-filter-pills" style="margin-top:12px;">
+                <button class="pill active" data-filter="todos" onclick="setHistoryFilter('todos')">Todos</button>
+                <button class="pill" data-filter="hora" onclick="setHistoryFilter('hora')">Horas</button>
+                <button class="pill" data-filter="compra" onclick="setHistoryFilter('compra')">Compras</button>
+                <button class="pill" data-filter="venda" onclick="setHistoryFilter('venda')">Vendas</button>
+                <button class="pill" data-filter="producao" onclick="setHistoryFilter('producao')">Produção</button>
+                <button class="pill" data-filter="servico" onclick="setHistoryFilter('servico')">Serviços</button>
+                <button class="pill" data-filter="ajuste" onclick="setHistoryFilter('ajuste')">Ajustes</button>
+            </div>
             <details id="adjustment-form-accordion" class="form-accordion">
                 <summary>➕ Ajuste Manual (aporte / retirada)</summary>
                 <div class="form-content">
@@ -639,25 +660,9 @@
                 <button class="clear-search-btn" id="clear-history-search" onclick="clearSearchHistory()">✕</button>
             </div>
 
-            <div class="filter-pills" id="history-filter-pills" style="margin-top:12px;">
-                <button class="pill active" data-filter="todos" onclick="setHistoryFilter('todos')">Todos</button>
-                <button class="pill" data-filter="hora" onclick="setHistoryFilter('hora')">Horas</button>
-                <button class="pill" data-filter="compra" onclick="setHistoryFilter('compra')">Compras</button>
-                <button class="pill" data-filter="venda" onclick="setHistoryFilter('venda')">Vendas</button>
-                <button class="pill" data-filter="producao" onclick="setHistoryFilter('producao')">Produção</button>
-                <button class="pill" data-filter="servico" onclick="setHistoryFilter('servico')">Serviços</button>
-                <button class="pill" data-filter="ajuste" onclick="setHistoryFilter('ajuste')">Ajustes</button>
-            </div>
+            
 
-            <div class="virtual-scroll" id="history-scroll" style="margin-top:12px;">
-                <div class="empty-state" id="history-empty-state">
-                    <span class="empty-icon">📜</span>
-                    <p>Nenhuma movimentação encontrada.</p>
-                </div>
-                <div class="virtual-spacer" id="history-top-spacer"></div>
-                <div class="virtual-viewport" id="history-viewport"></div>
-                <div class="virtual-spacer" id="history-bottom-spacer"></div>
-            </div>
+            
         </div>
     </div>
 
