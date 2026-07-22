@@ -331,12 +331,13 @@
         </div>
     </div>
 
-    <!-- ===================== HORAS ===================== -->
+<!-- ===================== HORAS ===================== -->
     <div class="tab-panel" id="tab-horas">
         <div class="panel horas">
             <h2 id="horas-panel-title">⏱️ Horas Trabalhadas</h2>
             <p class="field-note" style="margin-bottom:10px;">Crie, edite, exporte, importe usuários, 🟢receita ou 🔴despesa</p>
-            <!-- BOTÕES (PILLS) DOS FUNCIONÁRIOS -->
+            
+            <!-- BOTÕES (PILLS) EXCLUSIVOS DOS FUNCIONÁRIOS -->
             <div class="filter-pills" id="employee-pills" style="margin-bottom: 4px;">
                 <!-- Preenchido automaticamente via JS -->
             </div>
@@ -344,9 +345,6 @@
             <details id="hour-form-accordion" class="form-accordion">
                 <summary id="hour-form-title">➕ Registrar Horas</summary>
                 <div class="form-content">
-                    
-                    <!-- NOVO CAMPO: TIPO DE REGISTRO (RECEITA / DESPESA) -->
-                    <!-- <div class="form-content"> -->
                     
                     <div class="field">
                         <label>Tipo de Registro</label>
@@ -364,7 +362,7 @@
 
                     <div class="field"><label>Data</label><input type="date" id="hour-date"></div>
 
-                    <!-- NOVA CALCULADORA DE PONTO -->
+                    <!-- CALCULADORA DE PONTO -->
                     <div style="background: var(--bg-color); border: 1px dashed var(--border); padding: 10px; border-radius: 6px; margin-bottom: 14px;">
                         <label style="font-weight: bold; margin-bottom: 8px; display: block; font-size: 13px;">⏱️ Calculadora de Ponto (Opcional)</label>
                         
@@ -377,7 +375,6 @@
                         <div class="field" style="margin: 8px 0 0 0;"><label>Pausa / Café (minutos)</label><input type="number" id="hour-coffee" placeholder="Ex: 15" min="0" oninput="calculateTimeDiff()"></div>
                     </div>
 
-                    <!-- O campo de quantidade continua aqui para exibir o resultado ou digitar manualmente -->
                     <div class="field"><label>Total de Horas Calculadas</label><input type="number" id="hour-qty" placeholder="Ex: 8 ou 8.5" min="0" step="0.01" oninput="updateHourLiveTotal()" style="background-color: rgba(0,0,0,0.05); font-weight: bold;"></div>
                     
                     <div class="field"><label>Valor cobrado/pago por hora (R$)</label><input type="number" id="hour-rate" placeholder="Ex: 25.00" min="0" step="0.01" oninput="updateHourLiveTotal()"></div>
@@ -390,16 +387,14 @@
                 </div>
             </details>
 
-            <!-- ÁREA DE BUSCA E EXPORTAÇÃO -->
-            <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 10px;">
+            <!-- ÁREA DE BUSCA E EXPORTAÇÃO (SÓ DE HORAS) -->
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
                 
-                <!-- Barra de Pesquisa Original (Ocupa 100% da largura) -->
                 <div class="search-wrapper" style="margin: 0;">
                     <input type="text" id="search-hours" placeholder="🔍 Buscar por observação..." oninput="onSearchHoursInput()">
                     <button class="clear-search-btn" id="clear-hours-search" onclick="clearSearchHours()">✕</button>
                 </div>
                 
-                <!-- Botões de Exportar/Importar (Lado a lado embaixo da busca) -->
                 <div style="display: flex; gap: 8px;">
                     <button onclick="exportFilteredHours('json')" title="Exportar arquivo para o sistema" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📤 Backup</button>
                     
@@ -407,7 +402,6 @@
                     
                     <button onclick="document.getElementById('import-hours-file').click()" title="Importar arquivo de horas" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📥 Importar</button>
                     
-                    <!-- Input invisível para selecionar o arquivo -->
                     <input type="file" id="import-hours-file" accept=".json" style="display:none" onchange="importFilteredHours(event)">
                 </div>
                 
@@ -429,7 +423,7 @@
     <div class="tab-panel" id="tab-produtos">
         <div class="panel produtos">
             <h2>📦 Produtos e Estoque</h2>
-            <p class="field-note" style="margin-bottom:10px;">Todos os produtos que você tem en estoque ficaram aqui, você pode, comprar mais, vende-los ou usar para produção, vendendo ou produzindo eles serão abatidos do estoque</p>
+            <p class="field-note" style="margin-bottom:10px;">Todos os produtos que você tem em estoque ficarão aqui, você pode, comprar mais, vende-los ou usar para produção. Vendendo ou produzindo eles serão abatidos do estoque.</p>
 
             <details id="product-form-accordion" class="form-accordion">
                 <summary id="product-form-title">➕ Novo Produto</summary>
@@ -448,6 +442,12 @@
                     </div>
                     <p class="field-note" id="product-qty-note" style="display:none;">Este produto já tem movimentações — a quantidade e o custo são controlados pelas compras, vendas e produções registradas.</p>
                     <div class="field"><label>Preço de venda sugerido (R$)</label><input type="number" id="product-price" min="0" step="0.01" placeholder="0.00" oninput="onProductPriceChange()"></div>
+                    
+                    <div class="field">
+                        <label>Observações (opcional)</label>
+                        <textarea id="product-notes" rows="2" placeholder="Ex: Acompanha som, docs atrasados, avarias..."></textarea>
+                    </div>
+                    
                     <div class="btn-row">
                         <button onclick="saveProduct()" id="btn-save-product">Salvar Produto</button>
                         <button onclick="cancelProductEdit()" id="btn-cancel-product" class="btn-secondary" style="display:none;">Cancelar</button>
@@ -455,9 +455,26 @@
                 </div>
             </details>
 
-            <div class="search-wrapper" style="margin-top:14px;">
-                <input type="text" id="search-products" placeholder="🔍 Buscar produto..." oninput="onSearchProductsInput()">
-                <button class="clear-search-btn" id="clear-products-search" onclick="clearSearchProducts()">✕</button>
+            <!-- BOTÕES (PILLS) EXCLUSIVOS PARA AS CATEGORIAS DE PRODUTOS -->
+            <div class="filter-pills" id="category-pills" style="margin-bottom: 4px; margin-top: 14px;">
+                <!-- Preenchido automaticamente via JS -->
+            </div>
+
+            <!-- ÁREA DE BUSCA E EXPORTAÇÃO (SÓ DE PRODUTOS) -->
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                
+                <div class="search-wrapper" style="margin: 0;">
+                    <input type="text" id="search-products" placeholder="🔍 Buscar produto..." oninput="onSearchProductsInput()">
+                    <button class="clear-search-btn" id="clear-products-search" onclick="clearSearchProducts()">✕</button>
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="exportFilteredProducts('json')" title="Exportar arquivo para o sistema" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📤 Backup</button>
+                    <button onclick="exportFilteredProducts('txt')" title="Exportar catálogo legível para clientes" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📄 Catálogo</button>
+                    <button onclick="document.getElementById('import-products-file').click()" title="Importar produtos" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📥 Importar</button>
+                    <input type="file" id="import-products-file" accept=".json" style="display:none" onchange="importFilteredProducts(event)">
+                </div>
+                
             </div>
 
             <div class="virtual-scroll" id="products-scroll" style="margin-top:12px;">
@@ -535,9 +552,18 @@
             <details id="service-form-accordion" class="form-accordion">
                 <summary id="service-form-title">➕ Registrar Serviço</summary>
                 <div class="form-content">
+                    <!-- NOVO CAMPO: RECEITA OU DESPESA -->
+                    <div class="field" style="margin-bottom: 10px;">
+                        <label>Tipo de Registro</label>
+                        <select id="service-flow">
+                            <option value="income">🟢 Receita (Prestei um serviço - Soma no saldo)</option>
+                            <option value="expense">🔴 Despesa (Contratei um serviço - Desconta do saldo)</option>
+                        </select>
+                    </div>
+
                     <div class="form-row">
-                        <div class="field"><label>Tipo de serviço</label><input type="text" id="service-name" list="service-name-list" placeholder="Ex: Polimento, Lavagem..."><datalist id="service-name-list"></datalist></div>
-                        <div class="field"><label>Valor cobrado (R$)</label><input type="number" id="service-price" min="0" step="0.01" placeholder="0.00"></div>
+                        <div class="field"><label>Tipo de serviço</label><input type="text" id="service-name" list="service-name-list" placeholder="Ex: Polimento, Lavagem, Conserto..."><datalist id="service-name-list"></datalist></div>
+                        <div class="field"><label>Valor (R$)</label><input type="number" id="service-price" min="0" step="0.01" placeholder="0.00"></div>
                     </div>
                     <div class="form-row">
                         <div class="field"><label>Data</label><input type="date" id="service-date"></div>
@@ -551,9 +577,29 @@
                 </div>
             </details>
 
-            <div class="search-wrapper" style="margin-top:14px;">
-                <input type="text" id="search-services" placeholder="🔍 Buscar serviço ou cliente..." oninput="onSearchServicesInput()">
-                <button class="clear-search-btn" id="clear-services-search" onclick="clearSearchServices()">✕</button>
+            <!-- BOTÕES (PILLS) DOS CLIENTES -->
+            <div class="filter-pills" id="client-pills" style="margin-bottom: 4px; margin-top: 14px;">
+                <!-- Preenchido automaticamente via JS -->
+            </div>
+
+            <!-- ÁREA DE BUSCA E EXPORTAÇÃO (SÓ DE SERVIÇOS) -->
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                
+                <div class="search-wrapper" style="margin: 0;">
+                    <input type="text" id="search-services" placeholder="🔍 Buscar serviço ou cliente..." oninput="onSearchServicesInput()">
+                    <button class="clear-search-btn" id="clear-services-search" onclick="clearSearchServices()">✕</button>
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="exportFilteredServices('json')" title="Exportar arquivo para o sistema" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📤 Backup</button>
+                    
+                    <button onclick="exportFilteredServices('txt')" title="Exportar relatório para o cliente" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📄 Relatório</button>
+                    
+                    <button onclick="document.getElementById('import-services-file').click()" title="Importar serviços" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📥 Importar</button>
+                    
+                    <input type="file" id="import-services-file" accept=".json" style="display:none" onchange="importFilteredServices(event)">
+                </div>
+                
             </div>
 
             <div class="virtual-scroll" id="services-scroll" style="margin-top:12px;">
@@ -736,6 +782,7 @@
     let historyFilter = 'todos';
     let hoursSearchQuery = '', productsSearchQuery = '', servicesSearchQuery = '', recipesSearchQuery = '', historySearchQuery = '';
     let pendingImportPayload = null;
+    let currentCategoryFilter = 'todos';
 
     // ==========================================
     // BANCO DE DADOS (versão 2: adiciona receitas e produções)
@@ -962,20 +1009,39 @@
     // ==========================================
     // SALDO E RESUMO
     // ==========================================
-    function computeBalance() {
+function computeBalance() {
         let bal = 0;
         
-        // --- MUDANÇA AQUI: Verifica o tipo de registro da hora ---
+        // 1. HORAS 
         bal += allWorkHours.reduce((s, h) => {
-            const val = h.total || 0;
-            // Se for despesa (expense), joga o valor negativo, senão joga positivo
-            return s + (h.flow === 'expense' ? -val : val);
+            const val = Math.abs(h.total || 0); // Força ser positivo para evitar bugs
+            if (h.flow === 'expense') {
+                return s - val; // Despesa = ABATE do saldo
+            } else {
+                return s + val; // Receita = SOMA no saldo
+            }
         }, 0);
         
-        bal += allSales.reduce((s, x) => s + (x.total || 0), 0);
-        bal += allServices.reduce((s, x) => s + (x.price || 0), 0);
+        // 2. VENDAS (Sempre soma)
+        bal += allSales.reduce((s, x) => s + Math.abs(x.total || 0), 0);
+        
+        // 3. SERVIÇOS (Blindado)
+        // Atenção: A linha abaixo DEVE começar com "bal +="
+        bal += allServices.reduce((s, x) => {
+            const val = Math.abs(x.price || 0); // Força ser positivo
+            
+            if (x.flow === 'expense') {
+                return s - val; // 🔴 Despesa = ABATE do saldo
+            } else {
+                return s + val; // 🟢 Receita = SOMA no saldo
+            }
+        }, 0);
+        
+        // 4. AJUSTES (Mantém a lógica original do seu app, pois ajustes podem ser negativos)
         bal += allAdjustments.reduce((s, x) => s + (x.amount || 0), 0);
-        bal -= allPurchases.reduce((s, x) => s + (x.total || 0), 0);
+        
+        // 5. COMPRAS (Sempre subtrai)
+        bal -= allPurchases.reduce((s, x) => s + Math.abs(x.total || 0), 0);
         
         return round2(bal);
     }
@@ -1312,6 +1378,36 @@ function renderHoursList(resetScroll) {
     // ==========================================
     // PRODUTOS — CADASTRO E MÉTRICAS
     // ==========================================
+    // Desenha os botões de filtro por Categoria
+    // Função que desenha APENAS os botões de Categoria (na aba produtos)
+    function renderCategoryPills() {
+        // Pega exatamente a div dos produtos
+        const container = document.getElementById('category-pills'); 
+        if (!container) return;
+
+        const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+        
+        if (categories.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        
+        container.style.display = 'flex';
+        let html = `<button class="pill ${currentCategoryFilter === 'todos' ? 'active' : ''}" onclick="setCategoryFilter('todos')">Todos</button>`;
+        
+        categories.forEach(cat => {
+            const isActive = currentCategoryFilter === cat ? 'active' : '';
+            html += `<button class="pill ${isActive}" onclick="setCategoryFilter('${escapeAttr(cat)}')">${escapeHTML(cat)}</button>`;
+        });
+        
+        container.innerHTML = html;
+    }
+
+    // Quando você clica no botão de categoria (ex: "Motos")
+    function setCategoryFilter(cat) {
+        currentCategoryFilter = cat;
+        renderProductsList(true); // Atualiza a lista de produtos
+    }
     function onProductCostOrMarginChange() {
         const cost = parseFloat(document.getElementById('product-cost').value) || 0;
         const margin = parseFloat(document.getElementById('product-margin').value);
@@ -1327,7 +1423,7 @@ function renderHoursList(resetScroll) {
         return allPurchases.some(p => p.productId === productId) || allSales.some(s => s.productId === productId);
     }
 
-    async function saveProduct() {
+async function saveProduct() {
         const name = document.getElementById('product-name').value.trim();
         const category = document.getElementById('product-category').value.trim() || 'Geral';
         const unit = document.getElementById('product-unit').value.trim() || 'un';
@@ -1335,6 +1431,8 @@ function renderHoursList(resetScroll) {
         const cost = parseFloat(document.getElementById('product-cost').value) || 0;
         const margin = parseFloat(document.getElementById('product-margin').value) || 0;
         const salePrice = parseFloat(document.getElementById('product-price').value) || 0;
+        const notes = document.getElementById('product-notes').value.trim(); // <-- Lendo a observação
+
         if (!name) return showToast('Informe o nome do produto.', 'error');
         if (qty < 0 || cost < 0 || salePrice < 0) return showToast('Valores não podem ser negativos.', 'error');
 
@@ -1344,6 +1442,7 @@ function renderHoursList(resetScroll) {
                 const hasMovements = productHasMovements(editingProductId);
                 const updated = {
                     ...existing, name, category, unit, marginPercent: margin, salePrice,
+                    notes, // <-- Salvando a observação na edição
                     quantity: hasMovements ? existing.quantity : qty,
                     costPrice: hasMovements ? existing.costPrice : cost
                 };
@@ -1354,7 +1453,8 @@ function renderHoursList(resetScroll) {
             } else {
                 await runTx(['products', 'productPurchases'], 'readwrite', (tx) => {
                     const productStore = tx.objectStore('products');
-                    const req = productStore.add({ name, category, unit, quantity: qty, costPrice: cost, salePrice, marginPercent: margin, createdAt: todayISO() });
+                    // <-- Salvando a observação (notes) no novo produto
+                    const req = productStore.add({ name, category, unit, quantity: qty, costPrice: cost, salePrice, marginPercent: margin, notes, createdAt: todayISO() });
                     req.onsuccess = () => {
                         if (qty > 0) {
                             tx.objectStore('productPurchases').add({
@@ -1371,7 +1471,7 @@ function renderHoursList(resetScroll) {
         } catch (err) { console.error(err); showToast('Erro ao salvar produto.', 'error'); }
     }
 
-    function editProduct(id) {
+function editProduct(id) {
         const p = allProducts.find(x => x.id === id);
         if (!p) return;
         switchTab('produtos');
@@ -1383,6 +1483,9 @@ function renderHoursList(resetScroll) {
         document.getElementById('product-cost').value = p.costPrice;
         document.getElementById('product-margin').value = p.marginPercent || 0;
         document.getElementById('product-price').value = p.salePrice;
+        
+        // <-- Trazendo a observação de volta para a tela ao editar
+        document.getElementById('product-notes').value = p.notes || ''; 
 
         const hasMovements = productHasMovements(id);
         document.getElementById('product-qty').disabled = hasMovements;
@@ -1395,7 +1498,7 @@ function renderHoursList(resetScroll) {
         document.getElementById('btn-cancel-product').style.display = 'flex';
     }
 
-    function cancelProductEdit() {
+function cancelProductEdit() {
         editingProductId = null;
         document.getElementById('product-name').value = '';
         document.getElementById('product-category').value = '';
@@ -1404,6 +1507,10 @@ function renderHoursList(resetScroll) {
         document.getElementById('product-cost').value = '';
         document.getElementById('product-margin').value = '';
         document.getElementById('product-price').value = '';
+        
+        // <-- Limpando o campo de observação
+        document.getElementById('product-notes').value = ''; 
+        
         document.getElementById('product-qty').disabled = false;
         document.getElementById('product-cost').disabled = false;
         document.getElementById('product-qty-note').style.display = 'none';
@@ -1496,11 +1603,90 @@ function renderHoursList(resetScroll) {
     }
 
     function renderProductsList(resetScroll) {
+        renderCategoryPills(); // Atualiza os botões
+
         let items = sortedProducts;
-        if (productsSearchQuery) items = items.filter(p => p.name.toLowerCase().includes(productsSearchQuery) || (p.category || '').toLowerCase().includes(productsSearchQuery));
+        
+        // Aplica o filtro da Categoria (se for diferente de 'todos')
+        if (currentCategoryFilter !== 'todos') {
+            items = items.filter(p => (p.category || 'Geral') === currentCategoryFilter);
+        }
+
+        // Aplica o filtro da barra de pesquisa
+        if (productsSearchQuery) {
+            items = items.filter(p => 
+                p.name.toLowerCase().includes(productsSearchQuery) || 
+                (p.category || '').toLowerCase().includes(productsSearchQuery)
+            );
+        }
+        
         productsVirtualList.setItems(items, { resetScroll });
     }
+    function exportFilteredProducts(format = 'json') {
+        let items = allProducts;
+        let fileName = "todos_os_produtos";
+        let titleName = "Geral (Todos)";
+        
+        // Filtra os itens com base na aba que está selecionada
+        if (currentCategoryFilter !== 'todos') {
+            items = items.filter(p => (p.category || 'Geral') === currentCategoryFilter);
+            fileName = `produtos_${currentCategoryFilter.replace(/\s+/g, '_').toLowerCase()}`;
+            titleName = currentCategoryFilter;
+        }
+        
+        if (items.length === 0) {
+            return showToast('Nenhum produto para exportar nesta categoria.', 'error');
+        }
+        
+        if (format === 'json') {
+            // BACKUP JSON
+            const exportData = { products: items };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `${fileName}_${todayISO()}.json`);
+            dlAnchorElem.click();
+            showToast(`Backup JSON gerado: ${items.length} produtos!`);
+            
+        } else if (format === 'txt') {
+            // RELATÓRIO TXT / CATÁLOGO
+            let txtContent = `=======================================\n`;
+            txtContent += `      CATALOGO: ${titleName.toUpperCase()}\n`;
+            txtContent += `      Atualizado em: ${formatDateBR(todayISO())}\n`;
+            txtContent += `=======================================\n\n`;
 
+            items.forEach(p => {
+        txtContent += `>> ${p.name.toUpperCase()}\n`;
+        // Se for pra cliente, geralmente só interessa o preço e estoque disponível
+        txtContent += `Preço: ${formatCurrency(p.salePrice)}\n`;
+        
+        // Verifica se existe alguma observação salva e que não seja vazia
+        if (p.notes) {
+            txtContent += `Obs: ${p.notes.toLowerCase()}\n`;
+        }
+        
+        txtContent += `---------------------------------------\n`;
+    });
+
+            const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${fileName}_catalogo_${todayISO()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+
+            showToast(`Catálogo em TXT gerado com sucesso!`);
+        }
+    }
+
+    // Função "vazia" de importação só para não dar erro ao clicar no botão
+    // Se quiser implementar a importação de JSON depois, é só preencher aqui!
+    function importFilteredProducts(event) {
+        showToast('Importação será implementada em breve!', 'info');
+    }
     // ==========================================
     // MODAL: COMPRAR ESTOQUE
     // ==========================================
@@ -2059,15 +2245,22 @@ function renderHoursList(resetScroll) {
     // SERVIÇOS
     // ==========================================
     async function saveService() {
+        const flow = document.getElementById('service-flow').value; // Receita ou Despesa
         const name = document.getElementById('service-name').value.trim();
         const price = parseFloat(document.getElementById('service-price').value);
         const date = document.getElementById('service-date').value || todayISO();
         const client = document.getElementById('service-client').value.trim();
         const notes = document.getElementById('service-notes').value.trim();
+        
         if (!name) return showToast('Informe o tipo de serviço.', 'error');
-        if (isNaN(price) || price < 0) return showToast('Informe o valor cobrado.', 'error');
+        if (isNaN(price) || price < 0) return showToast('Informe o valor.', 'error');
 
-        const data = { name, price, date, client, notes };
+        // ==== NOVIDADE: Tira uma "foto" do formulário e salva na memória do navegador ====
+        const formCache = { flow, name, price, date, client, notes };
+        localStorage.setItem('lastServiceEntry', JSON.stringify(formCache));
+        // ==================================================================================
+
+        const data = { flow, name, price, date, client, notes }; 
         try {
             await runTx(['services'], 'readwrite', (tx) => {
                 const store = tx.objectStore('services');
@@ -2075,15 +2268,19 @@ function renderHoursList(resetScroll) {
             });
             cancelServiceEdit();
             await loadAllData(); rebuildCaches(); refreshUI();
-            showToast('Serviço registrado.');
+            showToast('Serviço registrado com sucesso.');
         } catch (err) { console.error(err); showToast('Erro ao salvar serviço.', 'error'); }
     }
-
+    
     function editService(id) {
         const s = allServices.find(x => x.id === id);
         if (!s) return;
         switchTab('servicos');
         document.getElementById('service-form-accordion').open = true;
+        
+        // <-- NOVO: Puxa o tipo (se for antigo e não tiver, vira income por padrão)
+        document.getElementById('service-flow').value = s.flow || 'income'; 
+        
         document.getElementById('service-name').value = s.name;
         document.getElementById('service-price').value = s.price;
         document.getElementById('service-date').value = s.date;
@@ -2095,19 +2292,46 @@ function renderHoursList(resetScroll) {
         document.getElementById('btn-cancel-service').style.display = 'flex';
     }
 
-    function cancelServiceEdit() {
+function cancelServiceEdit() {
         editingServiceId = null;
-        document.getElementById('service-name').value = '';
-        document.getElementById('service-price').value = '';
-        document.getElementById('service-date').value = todayISO();
-        document.getElementById('service-client').value = '';
-        document.getElementById('service-notes').value = '';
+        
+        // ==== NOVIDADE: Tenta buscar o último preenchimento da memória ====
+        let lastEntry = null;
+        try {
+            const saved = localStorage.getItem('lastServiceEntry');
+            if (saved) lastEntry = JSON.parse(saved);
+        } catch(e) {}
+
+        if (lastEntry) {
+            // Se encontrou dados salvos, preenche o formulário com eles
+            document.getElementById('service-flow').value = lastEntry.flow || 'income';
+            
+            // Prioriza o filtro de cliente clicado no botão. Se não, pega o da memória.
+            if (typeof currentClientFilter !== 'undefined' && currentClientFilter !== 'todos') {
+                document.getElementById('service-client').value = currentClientFilter;
+            } else {
+                document.getElementById('service-client').value = lastEntry.client || '';
+            }
+            
+            document.getElementById('service-name').value = lastEntry.name || '';
+            document.getElementById('service-price').value = lastEntry.price || '';
+            document.getElementById('service-date').value = lastEntry.date || todayISO();
+            document.getElementById('service-notes').value = lastEntry.notes || '';
+        } else {
+            // Se for a primeira vez usando, limpa tudo normalmente
+            document.getElementById('service-flow').value = 'income';
+            document.getElementById('service-name').value = '';
+            document.getElementById('service-price').value = '';
+            document.getElementById('service-date').value = todayISO();
+            document.getElementById('service-client').value = (typeof currentClientFilter !== 'undefined' && currentClientFilter !== 'todos') ? currentClientFilter : '';
+            document.getElementById('service-notes').value = '';
+        }
+
         document.getElementById('service-form-title').textContent = '➕ Registrar Serviço';
         document.getElementById('btn-save-service').textContent = 'Salvar Serviço';
         document.getElementById('btn-cancel-service').style.display = 'none';
         document.getElementById('service-form-accordion').open = false;
     }
-
     async function deleteService(id) {
         if (!confirm('Deseja excluir este serviço?')) return;
         await runTx(['services'], 'readwrite', (tx) => tx.objectStore('services').delete(id));
@@ -2127,15 +2351,21 @@ function renderHoursList(resetScroll) {
         renderServicesList(true);
     }
 
-    function renderServiceRowHTML(s) {
+function renderServiceRowHTML(s) {
+        // Verifica se é despesa para mudar a cor e o ícone (- vermelho, + verde)
+        const isExpense = s.flow === 'expense';
+        const amountClass = isExpense ? 'negative' : 'positive';
+        const sign = isExpense ? '-' : '+';
+        const icon = isExpense ? '🔴' : '🟢';
+
         return `<div class="list-row">
             <div class="row-main">
-                <span class="row-date">📅 ${formatDateBR(s.date)}</span>
-                <span class="row-title">${escapeHTML(s.name)}${s.client ? ' — ' + escapeHTML(s.client) : ''}</span>
-                ${s.notes ? `<span class="row-subtitle">${escapeHTML(s.notes)}</span>` : ''}
+                <span class="row-date">${icon} ${escapeHTML(s.client || 'Sem cliente')} | 📅 ${formatDateBR(s.date)}</span>
+                <span class="row-title">${escapeHTML(s.name)}</span>
+                ${s.notes ? `<span class="row-subtitle" style="margin-top: 4px;">${escapeHTML(s.notes)}</span>` : ''}
             </div>
             <div class="row-side">
-                <span class="row-amount positive">+${formatCurrency(s.price)}</span>
+                <span class="row-amount ${amountClass}">${sign}${formatCurrency(s.price)}</span>
                 <div class="row-actions">
                     <button class="icon-btn" onclick="editService(${s.id})" title="Editar">✏️</button>
                     <button class="icon-btn" onclick="deleteService(${s.id})" title="Excluir">🗑️</button>
@@ -2143,13 +2373,150 @@ function renderHoursList(resetScroll) {
             </div>
         </div>`;
     }
+function renderServicesList(resetScroll) {
+        renderClientPills(); // Atualiza os botões
 
-    function renderServicesList(resetScroll) {
         let items = sortedServices;
-        if (servicesSearchQuery) items = items.filter(s => s.name.toLowerCase().includes(servicesSearchQuery) || (s.client || '').toLowerCase().includes(servicesSearchQuery));
+        
+        // Filtra pelo cliente selecionado nos botões (Pills)
+        if (currentClientFilter !== 'todos') {
+            items = items.filter(s => (s.client || '') === currentClientFilter);
+        }
+
+        // Filtra pelo texto digitado na busca
+        if (servicesSearchQuery) {
+            items = items.filter(s => 
+                s.name.toLowerCase().includes(servicesSearchQuery) || 
+                (s.client || '').toLowerCase().includes(servicesSearchQuery) ||
+                (s.notes || '').toLowerCase().includes(servicesSearchQuery) // Busca nas notas também!
+            );
+        }
+        
         servicesVirtualList.setItems(items, { resetScroll });
     }
 
+    // Variável para lembrar qual cliente está selecionado
+    let currentClientFilter = 'todos';
+
+    // Desenha os botões com os nomes dos clientes
+    function renderClientPills() {
+        const container = document.getElementById('client-pills'); 
+        if (!container) return;
+
+        // Pega os nomes dos clientes (ignorando serviços sem cliente) e remove duplicatas
+        const clients = [...new Set(allServices.map(s => s.client).filter(c => c && c.trim() !== ''))].sort();
+        
+        if (clients.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        
+        container.style.display = 'flex';
+        let html = `<button class="pill ${currentClientFilter === 'todos' ? 'active' : ''}" onclick="setClientFilter('todos')">Todos</button>`;
+        
+        clients.forEach(client => {
+            const isActive = currentClientFilter === client ? 'active' : '';
+            html += `<button class="pill ${isActive}" onclick="setClientFilter('${escapeAttr(client)}')">${escapeHTML(client)}</button>`;
+        });
+        
+        container.innerHTML = html;
+    }
+
+    // Função que roda quando clica no nome do cliente
+    function setClientFilter(client) {
+        currentClientFilter = client;
+        renderServicesList(true);
+    }
+function exportFilteredServices(format) {
+        let items = sortedServices;
+        if (currentClientFilter !== 'todos') {
+            items = items.filter(s => (s.client || '') === currentClientFilter);
+        }
+        if (servicesSearchQuery) {
+            items = items.filter(s => s.name.toLowerCase().includes(servicesSearchQuery) || (s.client || '').toLowerCase().includes(servicesSearchQuery) || (s.notes || '').toLowerCase().includes(servicesSearchQuery));
+        }
+
+        if (items.length === 0) return showToast('Nenhum serviço para exportar.', 'error');
+
+        if (format === 'json') {
+            const dataStr = JSON.stringify(items, null, 2);
+            // ... (resto do código json igual)
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_servicos_${currentClientFilter !== 'todos' ? currentClientFilter : 'todos'}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } else if (format === 'txt') {
+            let txtContent = `RELATÓRIO DE SERVIÇOS - ${currentClientFilter !== 'todos' ? 'Cliente: ' + currentClientFilter.toUpperCase() : 'TODOS OS CLIENTES'}\n`;
+            let totalValue = 0;
+
+            items.forEach(s => {
+                const isExpense = s.flow === 'expense';
+                const sign = isExpense ? '-' : '+';
+                
+                txtContent += `>> ${s.name.toUpperCase()}\n`;
+                txtContent += `Data: ${formatDateBR(s.date)}\n`;
+                if (s.client && currentClientFilter === 'todos') {
+                    txtContent += `Cliente: ${s.client}\n`;
+                }
+                
+                // Mostra se é Despesa ou Receita e aplica o sinal
+                txtContent += `Valor: ${sign}${formatCurrency(s.price)} ${isExpense ? '(Despesa)' : '(Receita)'}\n`;
+                
+                if (s.notes) {
+                    txtContent += `Obs: ${s.notes.toLowerCase()}\n`;
+                }
+                
+                txtContent += `---------------------------------------\n`;
+                
+                // Soma ou subtrai do total do relatório
+                if (isExpense) {
+                    totalValue -= s.price;
+                } else {
+                    totalValue += s.price;
+                }
+            });
+
+            txtContent += `\nTOTAL DE REGISTROS: ${items.length}\n`;
+            txtContent += `SALDO DESTES SERVIÇOS: ${formatCurrency(totalValue)}\n`;
+
+            const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio_servicos_${currentClientFilter !== 'todos' ? currentClientFilter : 'todos'}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    }
+    async function importFilteredServices(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (!Array.isArray(importedData)) throw new Error('Formato inválido');
+                
+                await runTx(['services'], 'readwrite', (tx) => {
+                    const store = tx.objectStore('services');
+                    importedData.forEach(item => {
+                        delete item.id; // Gera um ID novo
+                        store.add(item);
+                    });
+                });
+                await loadAllData(); rebuildCaches(); refreshUI();
+                showToast('Serviços importados com sucesso!');
+            } catch (err) {
+                console.error(err);
+                showToast('Erro ao importar arquivo.', 'error');
+            }
+            event.target.value = ''; 
+        };
+        reader.readAsText(file);
+    }
     // ==========================================
     // AJUSTES MANUAIS
     // ==========================================
