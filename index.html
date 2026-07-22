@@ -115,7 +115,7 @@
     label { font-weight: 600; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 4px; }
     .field { display: flex; flex-direction: column; gap: 4px; }
     input, select, textarea {
-        width: 100%; padding: 5px 12px; border: 1px solid var(--border); border-radius: 8px;
+        width: 100%; padding: 5px 35px; border: 1px solid var(--border); border-radius: 8px;
         font-size: 0.95rem; background: #f8faf8; color: var(--ink); font-family: var(--font-ui);
     }
     input:focus, select:focus, textarea:focus {
@@ -159,7 +159,7 @@
     .search-wrapper { position: relative; }
     .search-wrapper input { padding-right: 38px; }
     .clear-search-btn {
-        position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; min-height: unset;
+        position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; min-height: unset;
         padding: 0; border-radius: 50%; background: #e2e8f0; color: var(--ink); font-size: 0.7rem; display: none;
     }
     .clear-search-btn:hover { background: #cbd5e1; filter: none; }
@@ -169,7 +169,7 @@
        e abaixo) representam a altura acumulada dos itens ocultos, então o scroll
        fica correto mesmo com dezenas de milhares de itens sem eles existirem no DOM. */
     .virtual-scroll {
-        max-height: 295px; overflow-y: auto; overflow-anchor: none; overscroll-behavior: contain;
+        max-height: 295px; min-height: 294.9px; overflow-y: auto; overflow-anchor: none; overscroll-behavior: contain;
         border: 1px solid var(--border); border-radius: 12px; background: #fafbf9; position: relative;
         padding: 10px;
     }
@@ -294,8 +294,8 @@
     <button class="nav-btn active" data-tab="resumo" onclick="switchTab('resumo')">📊 Resumo</button>
     <button class="nav-btn" data-tab="horas" onclick="switchTab('horas')">⏱️ Horas</button>
     <button class="nav-btn" data-tab="produtos" onclick="switchTab('produtos')">📦 Produtos</button>
-    <button class="nav-btn" data-tab="producao" onclick="switchTab('producao')">🍰 Produção</button>
     <button class="nav-btn" data-tab="servicos" onclick="switchTab('servicos')">🧰 Serviços</button>
+    <button class="nav-btn" data-tab="producao" onclick="switchTab('producao')">🍰 Produção</button>
     <button class="nav-btn" data-tab="historico" onclick="switchTab('historico')">📜 Histórico</button>
 </div>
 
