@@ -1329,7 +1329,10 @@ async function saveWorkHour() {
 
         return `<div class="list-row">
             <div class="row-main">
-                <span class="row-date">${icon} ${escapeHTML(h.employee || 'Geral')} | 📅 ${formatDateBR(h.date)}</span>
+                <span class="row-date">
+    ${icon} ${escapeHTML(h.employee || 'Geral')} |
+    📅 ${getWeekDayBR(h.date)} • ${formatDateBR(h.date)}
+</span>
                 <span class="row-title">${h.hours}h × ${formatCurrency(h.hourlyRate)}/h</span>
                 ${timeDetailsHTML}
                 ${h.notes ? `<span class="row-subtitle" style="margin-top: 4px;">${escapeHTML(h.notes)}</span>` : ''}
@@ -2594,7 +2597,7 @@ function buildHistoryEntries() {
             if (h.timeIn && h.timeOut) {
                 timeText = `⏰ ${h.timeIn} às ${h.timeOut}`;
                 if (h.lunchStart && h.lunchEnd) timeText += ` (Almoço: ${h.lunchStart}-${h.lunchEnd})`;
-                if (h.coffee) timeText += ` (Pausa: ${h.coffee}m)`;
+                if (h.coffee) timeText += ` (Pausa: ${h.coffee}m)\n`;
                 timeText += ' • '; // Um separador bonitinho
             }
 
@@ -2684,7 +2687,10 @@ function buildHistoryEntries() {
         const amountText = isNeutral ? '—' : `${isPositive ? '+' : ''}${formatCurrency(e.amount)}`;
         return `<div class="list-row">
             <div class="row-main">
-                <span class="row-date">📅 ${formatDateBR(e.date)} <span class="type-badge ${e.type}">${typeLabels[e.type]}</span></span>
+                <span class="row-date">
+📅 ${getWeekDayBR(e.date)}, ${formatDateBR(e.date)}
+<span class="type-badge ${e.type}">${typeLabels[e.type]}</span>
+</span>
                 <span class="row-title">${escapeHTML(e.title)}</span>
                 ${!compact ? `<span class="row-subtitle">${escapeHTML(e.subtitle)}</span>` : ''}
             </div>
@@ -2978,8 +2984,15 @@ function buildHistoryEntries() {
         // Adiciona classe de cor dependendo se o saldo é positivo ou negativo
         const colorClass = totalDinheiro < 0 ? 'var(--danger)' : 'var(--success)';
         
-        document.getElementById('horas-panel-title').innerHTML = `${titleText} <span style="float:right; font-size:14px; color:${colorClass};">${totalTempo}h = ${formatCurrency(totalDinheiro)}</span>`;
-    }
+        document.getElementById('horas-panel-title').innerHTML =
+            `${titleText}
+            <span style="float:right; font-size:14px; color:${colorClass};">
+            ${Number(totalTempo).toLocaleString('pt-BR', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+            })}h = ${formatCurrency(totalDinheiro)}
+            </span>`;
+            }
 
     function setEmployeeFilter(name) {
         currentEmployeeFilter = name;
@@ -3052,7 +3065,7 @@ function buildHistoryEntries() {
                 if (isExpense) totalDespesa += val;
                 else totalReceita += val;
 
-                txtContent += `Data: ${formatDateBR(h.date)} | Func/Cliente: ${h.employee || 'Geral'}\n`;
+                txtContent += `Data: ${getWeekDayBR(h.date)} | ${formatDateBR(h.date)} \nFunc/Cliente: ${h.employee || 'Geral'}\n`;
                 txtContent += `Tipo: ${flowText}\n`;
                 
                 // === ADICIONADO: Detalhes do relógio (Entrada, Saída, Almoço e Café) ===
@@ -3158,6 +3171,13 @@ function buildHistoryEntries() {
             console.error("Erro ao tentar preencher o formulário no carregamento:", e);
         }
     });
+    function getWeekDayBR(dateStr) {
+    const data = new Date(dateStr + 'T00:00:00');
+
+    return data.toLocaleDateString('pt-BR', {
+        weekday: 'long'
+    }).replace(/^./, c => c.toUpperCase());
+}
 </script>
 </body>
 </html>
