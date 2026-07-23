@@ -2594,18 +2594,27 @@ function buildHistoryEntries() {
             
             // Monta o texto do relógio se os dados existirem
             let timeText = '';
-            if (h.timeIn && h.timeOut) {
-                timeText = `⏰ ${h.timeIn} às ${h.timeOut}`;
-                if (h.lunchStart && h.lunchEnd) timeText += ` (Almoço: ${h.lunchStart}-${h.lunchEnd})`;
-                if (h.coffee) timeText += ` (Pausa: ${h.coffee}m)\n`;
-                timeText += ' • '; // Um separador bonitinho
-            }
+
+if (h.timeIn && h.timeOut) {
+
+    timeText += `⏰ ${h.timeIn} às ${h.timeOut}<br>`;
+
+    if (h.lunchStart && h.lunchEnd)
+        timeText += `(Almoço: ${h.lunchStart}-${h.lunchEnd})<br>`;
+
+    if (h.coffee)
+        timeText += `(Pausa: ${h.coffee}m)<br>`;
+
+}
 
             entries.push({
                 type: 'hora', id: h.id, date: h.date, seq: seq++,
                 title: `Horas (${h.employee || 'Geral'}) - ${flowText}`,
                 // Adicionamos o timeText logo antes da quantidade de horas
-                subtitle: `${timeText}${formatHoursMinutes(h.hours)} × ${formatCurrency(h.hourlyRate)}/h${h.notes ? ' — ' + h.notes : ''}`,
+                subtitle:
+`${timeText}
+${formatHoursMinutes(h.hours)} × ${formatCurrency(h.hourlyRate)}/h
+${h.notes ? `<br>— ${escapeHTML(h.notes)}` : ''}`,
                 amount: realAmount
             });
         });
@@ -2698,7 +2707,7 @@ function buildHistoryEntries() {
     // Converte: 2.75h × R$70/h
     // Para:    ⏱ 2h 45min • 💰 R$70/h
     // =========================================================
-    let subtitle = escapeHTML(e.subtitle || '');
+    let subtitle = e.subtitle || '';
 
     if (e.type === 'hora' && e.hours != null && e.hourlyRate != null) {
         subtitle = `⏱ ${formatHoursMinutes(e.hours)} • 💰 ${formatCurrency(e.hourlyRate)}/h`;
