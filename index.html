@@ -263,6 +263,41 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .recent-list { display: flex; flex-direction: column; gap: 8px; }
+    .help-tip{
+    margin-bottom:10px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--paper-raised);
+    overflow:hidden;
+}
+
+.help-tip summary {
+    cursor: pointer;
+    padding: 2px 0px;
+    font-weight: 600;
+    list-style: none;
+    user-select: none;
+}
+
+.help-tip summary::-webkit-details-marker{
+    display:none;
+}
+
+.help-tip summary::after{
+    content:" ▼";
+    float:right;
+    transition:.2s;
+}
+
+.help-tip[open] summary::after{
+    content:" ▲";
+}
+
+.help-tip p{
+    margin:0;
+    padding:0 14px 14px;
+    line-height:1.6;
+}
 </style>
 </head>
 <body>
@@ -428,9 +463,20 @@
     <!-- ===================== PRODUÇÃO (FICHAS TÉCNICAS) ===================== -->
     <div class="tab-panel" id="tab-producao">
         <div class="panel producao">
-            <h2>🍰 Fichas Técnicas (Receitas)</h2>
-            <p class="field-note" style="margin-bottom:10px;">Monte a receita com os ingredientes (produtos já cadastrados) e as quantidades gastas. Ao salvar uma nova ficha, a primeira produção é feita automaticamente: o estoque dos ingredientes é debitado e o custo por unidade/fatia é calculado.</p>
+            <!-- <h2>🍰 Fichas Técnicas (Receitas)</h2> -->
+            <details class="help-tip">
+
+    <summary>💡 Como funciona a receitas? 🍰 </summary>
+
+    <p>
+        Monte a receita com os ingredientes (produtos já cadastrados) e as quantidades gastas.
+        Ao salvar uma nova ficha, a primeira produção é feita automaticamente: o estoque dos
+        ingredientes é debitado e o custo por unidade/fatia é calculado.
+    </p>
+
+</details>
 <div class="virtual-scroll" id="recipes-scroll" style="margin: 10px 0px 10px 0px;">
+    
                 <div class="empty-state" id="recipes-empty-state">
                     <span class="empty-icon">🍰</span>
                     <p>Nenhuma ficha técnica ainda.<br>Crie a primeira receita acima.</p>
@@ -439,15 +485,32 @@
                 <div class="virtual-viewport" id="recipes-viewport"></div>
                 <div class="virtual-spacer" id="recipes-bottom-spacer"></div>
             </div>
-            
+            <!-- BOTÕES (PILLS) DE CATEGORIAS DAS RECEITAS -->
+<div class="filter-pills" id="recipe-category-pills" style="margin-bottom: 14px; margin-top: 14px;">
+    <!-- Preenchido automaticamente via JS -->
+</div>
             <button onclick="openRecipeModal()" style="width: 100%; margin-bottom: 14px; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit;">
     ➕ Nova Ficha Técnica
 </button>
 
-            <div class="search-wrapper" style="margin-top:14px;">
-                <input type="text" id="search-recipes" placeholder="🔍 Buscar ficha técnica..." oninput="onSearchRecipesInput()">
-                <button class="clear-search-btn" id="clear-recipes-search" onclick="clearSearchRecipes()">✕</button>
-            </div>
+            <!-- ÁREA DE BUSCA E EXPORTAÇÃO (FICHAS TÉCNICAS) -->
+<div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+    
+    <div class="search-wrapper" style="margin: 0;">
+        <input type="text" id="search-recipes" placeholder="🔍 Buscar ficha técnica..." oninput="onSearchRecipesInput()">
+        <button class="clear-search-btn" id="clear-recipes-search" onclick="clearSearchRecipes()">✕</button>
+    </div>
+    
+    <div style="display: flex; gap: 8px;">
+        <button onclick="exportFilteredRecipes('json')" title="Exportar arquivo para o sistema" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📤 Backup</button>
+        
+        <button onclick="exportFilteredRecipes('txt')" title="Exportar relatório legível" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📄 Relatório</button>
+        
+        <button onclick="document.getElementById('import-recipes-file').click()" title="Importar fichas técnicas" style="flex: 1; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit; font-size: 12px;">📥 Importar</button>
+        
+        <input type="file" id="import-recipes-file" accept=".json" style="display:none" onchange="importFilteredRecipes(event)">
+    </div>
+</div>
 
             
         </div>
@@ -2055,10 +2118,27 @@ function cancelRecipeEdit() {
     }
 
     function renderRecipesList(resetScroll) {
-        let items = sortedRecipes;
-        if (recipesSearchQuery) items = items.filter(r => r.name.toLowerCase().includes(recipesSearchQuery) || (r.category || '').toLowerCase().includes(recipesSearchQuery));
-        recipesVirtualList.setItems(items, { resetScroll });
+    // 1. Atualiza os botões na tela
+    renderRecipeCategoryPills(); 
+
+    let items = sortedRecipes;
+    
+    // 2. Filtra pela categoria clicada nos botões (Pills)
+    if (currentRecipeCategoryFilter !== 'todos') {
+        items = items.filter(r => (r.category || 'Geral') === currentRecipeCategoryFilter);
     }
+
+    // 3. Filtra pelo texto digitado na barra de busca
+    if (recipesSearchQuery) {
+        items = items.filter(r => 
+            r.name.toLowerCase().includes(recipesSearchQuery) || 
+            (r.category || '').toLowerCase().includes(recipesSearchQuery)
+        );
+    }
+    
+    // 4. Manda para a lista virtual desenhar
+    recipesVirtualList.setItems(items, { resetScroll });
+}
 
     // ---- Núcleo: transforma ingredientes em produto final, debitando estoque ----
     async function produceFromRecipe(recipeId, opts = {}) {
@@ -3140,6 +3220,39 @@ ${h.notes ? `<br>— ${escapeHTML(h.notes)}` : ''}`,
         
         renderHoursList(true);
     }
+
+    // Variável para lembrar qual categoria de receita está selecionada
+let currentRecipeCategoryFilter = 'todos';
+
+// Desenha os botões com as categorias das receitas
+function renderRecipeCategoryPills() {
+    const container = document.getElementById('recipe-category-pills'); 
+    if (!container) return;
+
+    // Pega as categorias das receitas e remove duplicatas
+    const categories = [...new Set(allRecipes.map(r => r.category).filter(Boolean))].sort();
+    
+    if (categories.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    container.style.display = 'flex';
+    let html = `<button class="pill ${currentRecipeCategoryFilter === 'todos' ? 'active' : ''}" onclick="setRecipeCategoryFilter('todos')">Todas</button>`;
+    
+    categories.forEach(cat => {
+        const isActive = currentRecipeCategoryFilter === cat ? 'active' : '';
+        html += `<button class="pill ${isActive}" onclick="setRecipeCategoryFilter('${escapeAttr(cat)}')">${escapeHTML(cat)}</button>`;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Função que roda quando clica no botão da categoria
+function setRecipeCategoryFilter(cat) {
+    currentRecipeCategoryFilter = cat;
+    renderRecipesList(true); // Atualiza a lista na tela
+}
     // ==========================================
     // EXPORTAR E IMPORTAR HORAS ESPECÍFICAS
     // ==========================================
@@ -3329,6 +3442,127 @@ function formatHoursMinutes(decimalHours) {
     }
 
     return `${horas}h ${String(minutos).padStart(2, '0')}min`;
+}
+// ==========================================
+// EXPORTAR E IMPORTAR RECEITAS (FICHAS TÉCNICAS)
+// ==========================================
+
+function exportFilteredRecipes(format = 'json') {
+    let items = sortedRecipes;
+    let fileName = "todas_as_fichas_tecnicas";
+    let titleName = "Geral (Todas)";
+    
+    // 1. Filtra pela categoria ativa nos botões
+    if (typeof currentRecipeCategoryFilter !== 'undefined' && currentRecipeCategoryFilter !== 'todos') {
+        items = items.filter(r => (r.category || 'Geral') === currentRecipeCategoryFilter);
+        fileName = `fichas_${currentRecipeCategoryFilter.replace(/\s+/g, '_').toLowerCase()}`;
+        titleName = currentRecipeCategoryFilter;
+    }
+
+    // 2. Filtra pela barra de busca (se houver texto)
+    if (recipesSearchQuery) {
+        items = items.filter(r => 
+            r.name.toLowerCase().includes(recipesSearchQuery) || 
+            (r.category || '').toLowerCase().includes(recipesSearchQuery)
+        );
+    }
+    
+    if (items.length === 0) {
+        return showToast('Nenhuma ficha técnica para exportar.', 'error');
+    }
+    
+    if (format === 'json') {
+        // EXPORTAÇÃO JSON (BACKUP PARA O SISTEMA)
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(items, null, 2));
+        const dlAnchorElem = document.createElement('a');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", `${fileName}_${todayISO()}.json`);
+        dlAnchorElem.click();
+        showToast(`Backup JSON gerado: ${items.length} fichas!`);
+        
+    } else if (format === 'txt') {
+        // EXPORTAÇÃO TXT (RELATÓRIO LEGÍVEL)
+        let txtContent = `=======================================\n`;
+        txtContent += `   RELATÓRIO DE FICHAS TÉCNICAS\n`;
+        txtContent += `   Categoria: ${titleName.toUpperCase()}\n`;
+        txtContent += `   Emitido em: ${formatDateBR(todayISO())}\n`;
+        txtContent += `=======================================\n\n`;
+
+        items.forEach(r => {
+            txtContent += `>> ${r.name.toUpperCase()}\n`;
+            if (r.category) txtContent += `Categoria: ${r.category}\n`;
+            txtContent += `Rendimento: ${r.yieldQuantity} ${r.yieldUnit}\n`;
+            txtContent += `Margem de Lucro: ${(r.marginPercent || 0).toFixed(0)}%\n`;
+            if (r.extraCost > 0) txtContent += `Custo Extra por lote: ${formatCurrency(r.extraCost)}\n`;
+            
+            txtContent += `\n[Ingredientes Necessários]:\n`;
+            r.ingredients.forEach(ing => {
+                // Tenta puxar o nome original do ingrediente do banco
+                const product = allProducts.find(p => p.id === ing.productId);
+                const prodName = product ? product.name : ing.productName || 'Ingrediente excluído';
+                txtContent += ` - ${prodName}: ${ing.quantity}\n`;
+            });
+            
+            if (r.notes) {
+                txtContent += `\nObs: ${r.notes}\n`;
+            }
+            txtContent += `---------------------------------------\n`;
+        });
+
+        txtContent += `\nTOTAL DE FICHAS NESTA LISTA: ${items.length}\n`;
+
+        const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}_relatorio_${todayISO()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        showToast(`Relatório TXT gerado com sucesso!`);
+    }
+}
+
+async function importFilteredRecipes(event) {
+    const file = event.target.files[0];
+    event.target.value = ''; // Reseta o input de arquivo
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = async () => {
+        try {
+            const importedData = JSON.parse(reader.result);
+            
+            if (!Array.isArray(importedData) || importedData.length === 0) {
+                return showToast('Nenhuma ficha técnica encontrada no arquivo.', 'error');
+            }
+            
+            if (!confirm(`O arquivo contém ${importedData.length} fichas técnicas. Deseja importar? (Aviso: O ideal é que os ingredientes já estejam cadastrados na aba Produtos).`)) return;
+
+            let count = 0;
+            await runTx(['recipes'], 'readwrite', (tx) => {
+                const store = tx.objectStore('recipes');
+                importedData.forEach(r => {
+                    const { id, ...newRecord } = r; // Remove o ID antigo para o banco gerar um novo
+                    store.add(newRecord);
+                    count++;
+                });
+            });
+            
+            await loadAllData(); 
+            rebuildCaches(); 
+            refreshUI();
+            showToast(`Sucesso! ${count} fichas técnicas importadas.`);
+            
+        } catch (err) {
+            console.error(err);
+            showToast('Erro ao ler o arquivo JSON. Arquivo corrompido?', 'error');
+        }
+    };
+    reader.onerror = () => showToast('Erro na leitura do arquivo.', 'error');
+    reader.readAsText(file);
 }
 </script>
 </body>
