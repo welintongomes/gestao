@@ -298,6 +298,52 @@
     padding:0 14px 14px;
     line-height:1.6;
 }
+/* barra fixa abaixo */
+#abaixotud{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:0;
+
+    width:min(100%,900px);
+
+    padding:8px 10px;
+
+    background:var(--paper-raised);
+
+    border-top:1px solid var(--line);
+
+    box-shadow:0 -4px 12px rgba(0,0,0,.15);
+
+    z-index:1000;
+}
+
+#abaixotud .tab-nav{
+
+    display:flex;
+
+    gap:8px;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+    flex-wrap:nowrap;
+
+    -webkit-overflow-scrolling:touch;
+
+    scrollbar-width:none;
+}
+
+#abaixotud .tab-nav::-webkit-scrollbar{
+    display:none;
+}
+
+#abaixotud .nav-btn{
+
+    flex:0 0 auto;
+
+    white-space:nowrap;
+}
 </style>
 </head>
 <body>
@@ -325,15 +371,6 @@
     </div>
 </div>
 
-<div class="tab-nav">
-    <button class="nav-btn active" data-tab="resumo" onclick="switchTab('resumo')">📊 Resumo</button>
-    <button class="nav-btn" data-tab="horas" onclick="switchTab('horas')">⏱️ Horas</button>
-    <button class="nav-btn" data-tab="produtos" onclick="switchTab('produtos')">📦 Produtos</button>
-    <button class="nav-btn" data-tab="servicos" onclick="switchTab('servicos')">🧰 Serviços</button>
-    <button class="nav-btn" data-tab="producao" onclick="switchTab('producao')">🍰 Produção</button>
-    <button class="nav-btn" data-tab="historico" onclick="switchTab('historico')">📜 Histórico</button>
-</div>
-
 <div class="app-container">
 
     <!-- ===================== RESUMO ===================== -->
@@ -354,7 +391,7 @@
             <h2>🕓 Últimas movimentações</h2>
             
             <!-- Usando a classe virtual-scroll com um limite de max-height menor (ex: 320px) para a home -->
-            <div class="virtual-scroll" id="recent-scroll" style="max-height: 320px; margin: 10px 0px 10px 0px;">
+            <div class="virtual-scroll" id="recent-scroll" style="margin: 10px 0px 60px 0px;">
                 <div class="empty-state" id="recent-empty-state">
                     <span class="empty-icon">🗒️</span>
                     <p>Nenhuma movimentação registrada ainda.</p>
@@ -833,6 +870,16 @@
             </div>
         </div>
     </div>
+<div id="abaixotud">
+    <div class="tab-nav">
+        <button class="nav-btn active" data-tab="resumo" onclick="switchTab('resumo')">📊 Resumo</button>
+        <button class="nav-btn" data-tab="horas" onclick="switchTab('horas')">⏱️ Horas</button>
+        <button class="nav-btn" data-tab="produtos" onclick="switchTab('produtos')">📦 Produtos</button>
+        <button class="nav-btn" data-tab="servicos" onclick="switchTab('servicos')">🧰 Serviços</button>
+        <button class="nav-btn" data-tab="producao" onclick="switchTab('producao')">🍰 Produção</button>
+        <button class="nav-btn" data-tab="historico" onclick="switchTab('historico')">📜 Histórico</button>
+    </div>
+</div>
 <script>
     let db;
     let allWorkHours = [], allProducts = [], allPurchases = [], allSales = [], allServices = [], allAdjustments = [], allRecipes = [], allProductions = [];
