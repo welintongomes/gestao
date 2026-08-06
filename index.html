@@ -115,7 +115,7 @@
     label { font-weight: 600; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 4px; }
     .field { display: flex; flex-direction: column; gap: 4px; }
     input, select, textarea {
-        width: 100%; padding: 5px 35px; border: 1px solid var(--border); border-radius: 8px;
+        width: 100%; padding: 2px 5px; border: 1px solid var(--border); border-radius: 8px;
         font-size: 0.95rem; background: #f8faf8; color: var(--ink); font-family: var(--font-ui);
     }
     input:focus, select:focus, textarea:focus {
@@ -157,7 +157,7 @@
 
     /* ================= BUSCA ================= */
     .search-wrapper { position: relative; }
-    .search-wrapper input { padding-right: 38px; }
+    .search-wrapper input { padding: 6px 7px 6px 32px; }
     .clear-search-btn {
         position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; min-height: unset;
         padding: 0; border-radius: 50%; background: #e2e8f0; color: var(--ink); font-size: 0.7rem; display: none;
@@ -169,7 +169,7 @@
        e abaixo) representam a altura acumulada dos itens ocultos, então o scroll
        fica correto mesmo com dezenas de milhares de itens sem eles existirem no DOM. */
     .virtual-scroll {
-        max-height: 295px; min-height: 294.9px; overflow-y: auto; overflow-anchor: none; overscroll-behavior: contain;
+        max-height: 30vh; min-height: 29.9vh; overflow-y: auto; overflow-anchor: none; overscroll-behavior: contain;
         border: 1px solid var(--border); border-radius: 12px; background: #fafbf9; position: relative;
         padding: 10px;
     }
@@ -246,7 +246,7 @@
 
     /* ================= MODAIS ================= */
     .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; backdrop-filter: blur(2px); }
-    .modal-content { background: #fff; padding: 22px; border-radius: 16px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 12px; }
+    .modal-content { background: #fff; padding: 22px; border-radius: 16px; width: 100%; max-width: 90vw; max-height: 87vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 12px; }
     .modal-header { font-size: 1.1rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
     .close-btn { cursor: pointer; background: #f1f5f0; border: none; border-radius: 50%; width: 30px; height: 30px; min-height: unset; display: flex; justify-content: center; align-items: center; font-weight: 700; }
     .modal-hint { font-size: 0.8rem; color: var(--muted); background: #f8faf8; border-radius: 8px; padding: 8px 10px; }
@@ -351,50 +351,10 @@
                 <!-- Preenchido automaticamente via JS -->
             </div>
 
-            <details id="hour-form-accordion" class="form-accordion">
-                <summary id="hour-form-title">➕ Registrar Horas</summary>
-                <div class="form-content">
-                    
-                    <div class="field">
-                        <label>Tipo de Registro</label>
-                        <select id="hour-flow">
-                            <option value="income">🟢 Receita (Meu serviço prestado - Soma no saldo)</option>
-                            <option value="expense">🔴 Despesa (Pagamento de funcionário - Desconta do saldo)</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label>Nome (Funcionário ou Cliente)</label>
-                        <input type="text" id="hour-employee" placeholder="Ex: João, Maria..." list="employee-datalist" autocomplete="off">
-                        <datalist id="employee-datalist"></datalist>
-                    </div>
-
-                    <div class="field"><label>Data</label><input type="date" id="hour-date"></div>
-
-                    <!-- CALCULADORA DE PONTO -->
-                    <div style="background: var(--bg-color); border: 1px dashed var(--border); padding: 10px; border-radius: 6px; margin-bottom: 14px;">
-                        <label style="font-weight: bold; margin-bottom: 8px; display: block; font-size: 13px;">⏱️ Calculadora de Ponto (Opcional)</label>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                            <div class="field" style="margin:0;"><label>Entrada</label><input type="time" id="hour-time-in" oninput="calculateTimeDiff()"></div>
-                            <div class="field" style="margin:0;"><label>Saída</label><input type="time" id="hour-time-out" oninput="calculateTimeDiff()"></div>
-                            <div class="field" style="margin:0;"><label>Ida Almoço</label><input type="time" id="hour-lunch-start" oninput="calculateTimeDiff()"></div>
-                            <div class="field" style="margin:0;"><label>Volta Almoço</label><input type="time" id="hour-lunch-end" oninput="calculateTimeDiff()"></div>
-                        </div>
-                        <div class="field" style="margin: 8px 0 0 0;"><label>Pausa / Café (minutos)</label><input type="number" id="hour-coffee" placeholder="Ex: 15" min="0" oninput="calculateTimeDiff()"></div>
-                    </div>
-
-                    <div class="field"><label>Total de Horas Calculadas</label><input type="number" id="hour-qty" placeholder="Ex: 8 ou 8.5" min="0" step="0.01" oninput="updateHourLiveTotal()" style="background-color: rgba(0,0,0,0.05); font-weight: bold;"></div>
-                    
-                    <div class="field"><label>Valor cobrado/pago por hora (R$)</label><input type="number" id="hour-rate" placeholder="Ex: 25.00" min="0" step="0.01" oninput="updateHourLiveTotal()"></div>
-                    <div class="live-total" id="hour-live-total">Total: R$ 0,00</div>
-                    <div class="field"><label>Observações (opcional)</label><textarea id="hour-notes" rows="2" placeholder="Ex: Turno extra, projeto X..."></textarea></div>
-                    <div class="btn-row">
-                        <button onclick="saveWorkHour()" id="btn-save-hour">Salvar Horas</button>
-                        <button onclick="cancelHourEdit()" id="btn-cancel-hour" class="btn-secondary" style="display:none;">Cancelar</button>
-                    </div>
-                </div>
-            </details>
+            <button onclick="openHourModal()" style="width: 100%; margin-bottom: 14px; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit;">
+    ➕ Registrar Horas
+</button>
+            
 
             <!-- ÁREA DE BUSCA E EXPORTAÇÃO (SÓ DE HORAS) -->
             <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
@@ -439,37 +399,10 @@
             <div class="filter-pills" id="category-pills" style="margin-bottom: 4px; margin-top: 14px;">
                 <!-- Preenchido automaticamente via JS -->
             </div>
-            <details id="product-form-accordion" class="form-accordion">
-                <summary id="product-form-title">➕ Novo Produto</summary>
-                <div class="form-content">
-                    <div class="form-row">
-                        <div class="field"><label>Nome do produto</label><input type="text" id="product-name" placeholder="Ex: Cera automotiva"></div>
-                        <div class="field"><label>Categoria</label><input type="text" id="product-category" list="product-category-list" placeholder="Ex: Limpeza"><datalist id="product-category-list"></datalist></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="field"><label>Quantidade inicial</label><input type="number" id="product-qty" min="0" step="0.01" placeholder="0"></div>
-                        <div class="field"><label>Unidade de medida</label><input type="text" id="product-unit" list="unit-list" placeholder="Ex: un, g, kg, ml, l"><datalist id="unit-list"><option value="un"><option value="g"><option value="kg"><option value="ml"><option value="l"><option value="cx"><option value="pct"></datalist></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="field"><label>Custo unitário (R$)</label><input type="number" id="product-cost" min="0" step="0.01" placeholder="0.00" oninput="onProductCostOrMarginChange()"></div>
-                        <div class="field"><label>Margem de lucro (%)</label><input type="number" id="product-margin" min="0" step="1" placeholder="40" oninput="onProductCostOrMarginChange()"></div>
-                    </div>
-                    <p class="field-note" id="product-qty-note" style="display:none;">Este produto já tem movimentações — a quantidade e o custo são controlados pelas compras, vendas e produções registradas.</p>
-                    <div class="field"><label>Preço de venda sugerido (R$)</label><input type="number" id="product-price" min="0" step="0.01" placeholder="0.00" oninput="onProductPriceChange()"></div>
-                    
-                    <div class="field">
-                        <label>Observações (opcional)</label>
-                        <textarea id="product-notes" rows="2" placeholder="Ex: Acompanha som, docs atrasados, avarias..."></textarea>
-                    </div>
-                    
-                    <div class="btn-row">
-                        <button onclick="saveProduct()" id="btn-save-product">Salvar Produto</button>
-                        <button onclick="cancelProductEdit()" id="btn-cancel-product" class="btn-secondary" style="display:none;">Cancelar</button>
-                    </div>
-                </div>
-            </details>
-
             
+            <button onclick="openProductModal()" style="width: 100%; margin-bottom: 14px; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit;">
+    ➕ Novo Produto
+</button>
 
             <!-- ÁREA DE BUSCA E EXPORTAÇÃO (SÓ DE PRODUTOS) -->
             <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
@@ -506,37 +439,10 @@
                 <div class="virtual-viewport" id="recipes-viewport"></div>
                 <div class="virtual-spacer" id="recipes-bottom-spacer"></div>
             </div>
-            <details id="recipe-form-accordion" class="form-accordion">
-                <summary id="recipe-form-title">➕ Nova Ficha Técnica</summary>
-                <div class="form-content">
-                    <div class="form-row">
-                        <div class="field"><label>Nome (ex: Bolo de Chocolate)</label><input type="text" id="recipe-name" placeholder="Ex: Bolo de Chocolate"></div>
-                        <div class="field"><label>Categoria</label><input type="text" id="recipe-category" list="recipe-category-list" placeholder="Ex: Doces"><datalist id="recipe-category-list"></datalist></div>
-                    </div>
-
-                    <label style="margin-top:4px;">Ingredientes</label>
-                    <div id="recipe-ingredients-container" style="display:flex; flex-direction:column; gap:8px;"></div>
-                    <datalist id="ingredient-datalist"></datalist>
-                    <button type="button" class="btn-secondary" onclick="addIngredientRow()" style="width:auto;">➕ Adicionar Ingrediente</button>
-
-                    <div class="form-row">
-                        <div class="field"><label>Rende quantas unidades/fatias</label><input type="number" id="recipe-yield-qty" min="0" step="0.01" placeholder="Ex: 8" oninput="updateRecipeLivePreview()"></div>
-                        <div class="field"><label>Unidade do resultado</label><input type="text" id="recipe-yield-unit" placeholder="Ex: fatias, unidades" oninput="updateRecipeLivePreview()"></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="field"><label>Custo extra (embalagem, gás...)</label><input type="number" id="recipe-extra-cost" min="0" step="0.01" placeholder="0.00" oninput="updateRecipeLivePreview()"></div>
-                        <div class="field"><label>Margem de lucro (%)</label><input type="number" id="recipe-margin" min="0" step="1" placeholder="Ex: 150" oninput="updateRecipeLivePreview()"></div>
-                    </div>
-                    <div class="live-total" id="recipe-live-preview">Preencha os ingredientes para ver o custo.</div>
-                    <div class="field"><label>Observações (opcional)</label><textarea id="recipe-notes" rows="2" placeholder="Modo de preparo, dicas..."></textarea></div>
-
-                    <p class="field-note" id="recipe-edit-note" style="display:none;">Editar aqui só altera a ficha para as próximas produções — não muda produções já feitas.</p>
-                    <div class="btn-row">
-                        <button onclick="saveRecipe()" id="btn-save-recipe">Salvar e Produzir</button>
-                        <button onclick="cancelRecipeEdit()" id="btn-cancel-recipe" class="btn-secondary" style="display:none;">Cancelar</button>
-                    </div>
-                </div>
-            </details>
+            
+            <button onclick="openRecipeModal()" style="width: 100%; margin-bottom: 14px; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit;">
+    ➕ Nova Ficha Técnica
+</button>
 
             <div class="search-wrapper" style="margin-top:14px;">
                 <input type="text" id="search-recipes" placeholder="🔍 Buscar ficha técnica..." oninput="onSearchRecipesInput()">
@@ -564,35 +470,10 @@
             <div class="filter-pills" id="client-pills" style="margin-bottom: 4px; margin-top: 14px;">
                 <!-- Preenchido automaticamente via JS -->
             </div>
-            <details id="service-form-accordion" class="form-accordion">
-                <summary id="service-form-title">➕ Registrar Serviço</summary>
-                <div class="form-content">
-                    <!-- NOVO CAMPO: RECEITA OU DESPESA -->
-                    <div class="field" style="margin-bottom: 10px;">
-                        <label>Tipo de Registro</label>
-                        <select id="service-flow">
-                            <option value="income">🟢 Receita (Prestei um serviço - Soma no saldo)</option>
-                            <option value="expense">🔴 Despesa (Contratei um serviço - Desconta do saldo)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="field"><label>Tipo de serviço</label><input type="text" id="service-name" list="service-name-list" placeholder="Ex: Polimento, Lavagem, Conserto..."><datalist id="service-name-list"></datalist></div>
-                        <div class="field"><label>Valor (R$)</label><input type="number" id="service-price" min="0" step="0.01" placeholder="0.00"></div>
-                    </div>
-                    <div class="form-row">
-                        <div class="field"><label>Data</label><input type="date" id="service-date"></div>
-                        <div class="field"><label>Cliente (opcional)</label><input type="text" id="service-client" placeholder="Ex: João"></div>
-                    </div>
-                    <div class="field"><label>Observações (opcional)</label><textarea id="service-notes" rows="2" placeholder="Detalhes do serviço..."></textarea></div>
-                    <div class="btn-row">
-                        <button onclick="saveService()" id="btn-save-service">Salvar Serviço</button>
-                        <button onclick="cancelServiceEdit()" id="btn-cancel-service" class="btn-secondary" style="display:none;">Cancelar</button>
-                    </div>
-                </div>
-            </details>
-
             
+            <button onclick="openServiceModal()" style="width: 100%; margin-bottom: 14px; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit;">
+    ➕ Registrar Serviço
+</button>
 
             <!-- ÁREA DE BUSCA E EXPORTAÇÃO (SÓ DE SERVIÇOS) -->
             <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
@@ -640,20 +521,10 @@
                 <button class="pill" data-filter="servico" onclick="setHistoryFilter('servico')">Serviços</button>
                 <button class="pill" data-filter="ajuste" onclick="setHistoryFilter('ajuste')">Ajustes</button>
             </div>
-            <details id="adjustment-form-accordion" class="form-accordion">
-                <summary>➕ Ajuste Manual (aporte / retirada)</summary>
-                <div class="form-content">
-                    <div class="field"><label>Descrição</label><input type="text" id="adjustment-desc" placeholder="Ex: Aporte inicial, Retirada pessoal..."></div>
-                    <div class="form-row">
-                        <div class="field"><label>Valor (R$) — use negativo para retirada</label><input type="number" id="adjustment-amount" step="0.01" placeholder="Ex: 100 ou -50"></div>
-                        <div class="field"><label>Data</label><input type="date" id="adjustment-date"></div>
-                    </div>
-                    <div class="btn-row">
-                        <button onclick="saveAdjustment()" id="btn-save-adjustment">Salvar Ajuste</button>
-                        <button onclick="cancelAdjustmentEdit()" id="btn-cancel-adjustment" class="btn-secondary" style="display:none;">Cancelar</button>
-                    </div>
-                </div>
-            </details>
+            
+            <button onclick="openAdjustmentModal()" style="width: 100%; margin-top: 14px; margin-bottom: 14px; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 6px; cursor: pointer; font-weight: bold; color: inherit;">
+    ➕ Ajuste Manual (aporte / retirada)
+</button>
 
             <div class="search-wrapper" style="margin-top:14px;">
                 <input type="text" id="search-history" placeholder="🔍 Buscar no histórico..." oninput="onSearchHistoryInput()">
@@ -666,6 +537,130 @@
         </div>
     </div>
 
+</div>
+
+<!-- ===================== MODAL: REGISTRAR HORAS ===================== -->
+<div class="modal-overlay" id="hour-modal" style="display:none;" onclick="if(event.target===this) cancelHourEdit()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header"><span id="hour-form-title">➕ Registrar Horas</span><button class="close-btn" onclick="cancelHourEdit()">✕</button></div>
+        <div class="field"><label>Tipo de Registro</label><select id="hour-flow"><option value="income">🟢 Receita (Meu serviço prestado - Soma no saldo)</option><option value="expense">🔴 Despesa (Pagamento de funcionário - Desconta do saldo)</option></select></div>
+        <div class="field"><label>Nome (Funcionário ou Cliente)</label><input type="text" id="hour-employee" placeholder="Ex: João, Maria..." list="employee-datalist" autocomplete="off"><datalist id="employee-datalist"></datalist></div>
+        <div class="field"><label>Data</label><input type="date" id="hour-date"></div>
+        <div style="background: var(--bg-color); border: 1px dashed var(--border); padding: 10px; border-radius: 6px; margin-bottom: 14px;">
+            <label style="font-weight: bold; margin-bottom: 8px; display: block; font-size: 13px;">⏱️ Calculadora de Ponto (Opcional)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div class="field" style="margin:0;"><label>Entrada</label><input type="time" id="hour-time-in" oninput="calculateTimeDiff()"></div>
+                <div class="field" style="margin:0;"><label>Saída</label><input type="time" id="hour-time-out" oninput="calculateTimeDiff()"></div>
+                <div class="field" style="margin:0;"><label>Ida Almoço</label><input type="time" id="hour-lunch-start" oninput="calculateTimeDiff()"></div>
+                <div class="field" style="margin:0;"><label>Volta Almoço</label><input type="time" id="hour-lunch-end" oninput="calculateTimeDiff()"></div>
+            </div>
+            <div class="field" style="margin: 8px 0 0 0;"><label>Pausa / Café (minutos)</label><input type="number" id="hour-coffee" placeholder="Ex: 15" min="0" oninput="calculateTimeDiff()"></div>
+        </div>
+        <div class="field"><label>Total de Horas Calculadas</label><input type="number" id="hour-qty" placeholder="Ex: 8 ou 8.5" min="0" step="0.01" oninput="updateHourLiveTotal()" style="background-color: rgba(0,0,0,0.05); font-weight: bold;"></div>
+        <div class="field"><label>Valor cobrado/pago por hora (R$)</label><input type="number" id="hour-rate" placeholder="Ex: 25.00" min="0" step="0.01" oninput="updateHourLiveTotal()"></div>
+        <div class="live-total" id="hour-live-total">Total: R$ 0,00</div>
+        <div class="field"><label>Observações (opcional)</label><textarea id="hour-notes" rows="2" placeholder="Ex: Turno extra, projeto X..."></textarea></div>
+        <div class="btn-row">
+            <button onclick="saveWorkHour()" id="btn-save-hour">Salvar Horas</button>
+            <button onclick="cancelHourEdit()" id="btn-cancel-hour" class="btn-secondary" style="display:none;">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: NOVO PRODUTO ===================== -->
+<div class="modal-overlay" id="product-modal" style="display:none;" onclick="if(event.target===this) cancelProductEdit()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header"><span id="product-form-title">➕ Novo Produto</span><button class="close-btn" onclick="cancelProductEdit()">✕</button></div>
+        <div class="form-row">
+            <div class="field"><label>Nome do produto</label><input type="text" id="product-name" placeholder="Ex: Cera automotiva"></div>
+            <div class="field"><label>Categoria</label><input type="text" id="product-category" list="product-category-list" placeholder="Ex: Limpeza"><datalist id="product-category-list"></datalist></div>
+        </div>
+        <div class="form-row">
+            <div class="field"><label>Quantidade inicial</label><input type="number" id="product-qty" min="0" step="0.01" placeholder="0"></div>
+            <div class="field"><label>Unidade de medida</label><input type="text" id="product-unit" list="unit-list" placeholder="Ex: un, g, kg, ml, l"><datalist id="unit-list"><option value="un"><option value="g"><option value="kg"><option value="ml"><option value="l"><option value="cx"><option value="pct"></datalist></div>
+        </div>
+        <div class="form-row">
+            <div class="field"><label>Custo unitário (R$)</label><input type="number" id="product-cost" min="0" step="0.01" placeholder="0.00" oninput="onProductCostOrMarginChange()"></div>
+            <div class="field"><label>Margem de lucro (%)</label><input type="number" id="product-margin" min="0" step="1" placeholder="40" oninput="onProductCostOrMarginChange()"></div>
+        </div>
+        <p class="field-note" id="product-qty-note" style="display:none;">Este produto já tem movimentações — a quantidade e o custo são controlados pelas compras, vendas e produções registradas.</p>
+        <div class="field"><label>Preço de venda sugerido (R$)</label><input type="number" id="product-price" min="0" step="0.01" placeholder="0.00" oninput="onProductPriceChange()"></div>
+        <div class="field"><label>Observações (opcional)</label><textarea id="product-notes" rows="2" placeholder="Ex: Acompanha som, docs atrasados, avarias..."></textarea></div>
+        <div class="btn-row">
+            <button onclick="saveProduct()" id="btn-save-product">Salvar Produto</button>
+            <button onclick="cancelProductEdit()" id="btn-cancel-product" class="btn-secondary" style="display:none;">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: NOVA FICHA TÉCNICA ===================== -->
+<div class="modal-overlay" id="recipe-modal" style="display:none;" onclick="if(event.target===this) cancelRecipeEdit()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header"><span id="recipe-form-title">➕ Nova Ficha Técnica</span><button class="close-btn" onclick="cancelRecipeEdit()">✕</button></div>
+        <div class="form-row">
+            <div class="field"><label>Nome (ex: Bolo de Chocolate)</label><input type="text" id="recipe-name" placeholder="Ex: Bolo de Chocolate"></div>
+            <div class="field"><label>Categoria</label><input type="text" id="recipe-category" list="recipe-category-list" placeholder="Ex: Doces"><datalist id="recipe-category-list"></datalist></div>
+        </div>
+        <label style="margin-top:4px;">Ingredientes</label>
+        <div id="recipe-ingredients-container" style="display:flex; flex-direction:column; gap:8px;"></div>
+        <datalist id="ingredient-datalist"></datalist>
+        <button type="button" class="btn-secondary" onclick="addIngredientRow()" style="width:auto; margin-bottom: 10px;">➕ Adicionar Ingrediente</button>
+        <div class="form-row">
+            <div class="field"><label>Rende quantas unidades/fatias</label><input type="number" id="recipe-yield-qty" min="0" step="0.01" placeholder="Ex: 8" oninput="updateRecipeLivePreview()"></div>
+            <div class="field"><label>Unidade do resultado</label><input type="text" id="recipe-yield-unit" placeholder="Ex: fatias, unidades" oninput="updateRecipeLivePreview()"></div>
+        </div>
+        <div class="form-row">
+            <div class="field"><label>Custo extra (embalagem, gás...)</label><input type="number" id="recipe-extra-cost" min="0" step="0.01" placeholder="0.00" oninput="updateRecipeLivePreview()"></div>
+            <div class="field"><label>Margem de lucro (%)</label><input type="number" id="recipe-margin" min="0" step="1" placeholder="Ex: 150" oninput="updateRecipeLivePreview()"></div>
+        </div>
+        <div class="live-total" id="recipe-live-preview">Preencha os ingredientes para ver o custo.</div>
+        <div class="field"><label>Observações (opcional)</label><textarea id="recipe-notes" rows="2" placeholder="Modo de preparo, dicas..."></textarea></div>
+        <p class="field-note" id="recipe-edit-note" style="display:none;">Editar aqui só altera a ficha para as próximas produções — não muda produções já feitas.</p>
+        <div class="btn-row">
+            <button onclick="saveRecipe()" id="btn-save-recipe">Salvar e Produzir</button>
+            <button onclick="cancelRecipeEdit()" id="btn-cancel-recipe" class="btn-secondary" style="display:none;">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: REGISTRAR SERVIÇO ===================== -->
+<div class="modal-overlay" id="service-modal" style="display:none;" onclick="if(event.target===this) cancelServiceEdit()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header"><span id="service-form-title">➕ Registrar Serviço</span><button class="close-btn" onclick="cancelServiceEdit()">✕</button></div>
+        <div class="field" style="margin-bottom: 10px;">
+            <label>Tipo de Registro</label>
+            <select id="service-flow"><option value="income">🟢 Receita (Prestei um serviço - Soma no saldo)</option><option value="expense">🔴 Despesa (Contratei um serviço - Desconta do saldo)</option></select>
+        </div>
+        <div class="form-row">
+            <div class="field"><label>Tipo de serviço</label><input type="text" id="service-name" list="service-name-list" placeholder="Ex: Polimento, Lavagem, Conserto..."><datalist id="service-name-list"></datalist></div>
+            <div class="field"><label>Valor (R$)</label><input type="number" id="service-price" min="0" step="0.01" placeholder="0.00"></div>
+        </div>
+        <div class="form-row">
+            <div class="field"><label>Data</label><input type="date" id="service-date"></div>
+            <div class="field"><label>Cliente (opcional)</label><input type="text" id="service-client" placeholder="Ex: João"></div>
+        </div>
+        <div class="field"><label>Observações (opcional)</label><textarea id="service-notes" rows="2" placeholder="Detalhes do serviço..."></textarea></div>
+        <div class="btn-row">
+            <button onclick="saveService()" id="btn-save-service">Salvar Serviço</button>
+            <button onclick="cancelServiceEdit()" id="btn-cancel-service" class="btn-secondary" style="display:none;">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: AJUSTE MANUAL ===================== -->
+<div class="modal-overlay" id="adjustment-modal" style="display:none;" onclick="if(event.target===this) cancelAdjustmentEdit()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header"><span>➕ Ajuste Manual</span><button class="close-btn" onclick="cancelAdjustmentEdit()">✕</button></div>
+        <div class="field"><label>Descrição</label><input type="text" id="adjustment-desc" placeholder="Ex: Aporte inicial, Retirada pessoal..."></div>
+        <div class="form-row">
+            <div class="field"><label>Valor (R$) — use negativo para retirada</label><input type="number" id="adjustment-amount" step="0.01" placeholder="Ex: 100 ou -50"></div>
+            <div class="field"><label>Data</label><input type="date" id="adjustment-date"></div>
+        </div>
+        <div class="btn-row">
+            <button onclick="saveAdjustment()" id="btn-save-adjustment">Salvar Ajuste</button>
+            <button onclick="cancelAdjustmentEdit()" id="btn-cancel-adjustment" class="btn-secondary" style="display:none;">Cancelar</button>
+        </div>
+    </div>
 </div>
 
 <!-- ===================== MODAL: COMPRAR ESTOQUE ===================== -->
@@ -882,6 +877,12 @@
             tx.onabort = () => reject(tx.error || new Error('Transação abortada'));
         });
     }
+
+        function openHourModal() { cancelHourEdit(); document.getElementById('hour-modal').style.display = 'flex'; }
+        function openProductModal() { cancelProductEdit(); document.getElementById('product-modal').style.display = 'flex'; }
+        function openRecipeModal() { cancelRecipeEdit(); document.getElementById('recipe-modal').style.display = 'flex'; }
+        function openServiceModal() { cancelServiceEdit(); document.getElementById('service-modal').style.display = 'flex'; }
+        function openAdjustmentModal() { cancelAdjustmentEdit(); document.getElementById('adjustment-modal').style.display = 'flex'; }
 
     // ==========================================
     // NAVEGAÇÃO ENTRE ABAS
@@ -1231,85 +1232,79 @@ async function saveWorkHour() {
             showToast('Horas registradas com sucesso.');
         } catch (err) { console.error(err); showToast('Erro ao salvar horas.', 'error'); }
     }
+
     function editWorkHour(id) {
-        const h = allWorkHours.find(x => x.id === id);
-        if (!h) return;
-        switchTab('horas');
-        document.getElementById('hour-form-accordion').open = true;
-        
-        document.getElementById('hour-flow').value = h.flow || 'income'; 
-        document.getElementById('hour-employee').value = h.employee || 'Geral';
-        document.getElementById('hour-date').value = h.date;
-        document.getElementById('hour-qty').value = h.hours;
-        document.getElementById('hour-rate').value = h.hourlyRate;
-        document.getElementById('hour-notes').value = h.notes || '';
-        
-        // Puxa os horários de volta se existirem
-        document.getElementById('hour-time-in').value = h.timeIn || '';
-        document.getElementById('hour-time-out').value = h.timeOut || '';
-        document.getElementById('hour-lunch-start').value = h.lunchStart || '';
-        document.getElementById('hour-lunch-end').value = h.lunchEnd || '';
-        document.getElementById('hour-coffee').value = h.coffee || '';
-
-        updateHourLiveTotal();
-        editingHourId = id;
-        document.getElementById('hour-form-title').textContent = '✏️ Editando Horas';
-        document.getElementById('btn-save-hour').textContent = 'Atualizar';
-        document.getElementById('btn-cancel-hour').style.display = 'flex';
-    }
-
-    function cancelHourEdit() {
-        editingHourId = null;
-        
-        // ==== NOVIDADE: Tenta buscar o último preenchimento ====
-        let lastEntry = null;
-        try {
-            const saved = localStorage.getItem('lastWorkHourEntry');
-            if (saved) lastEntry = JSON.parse(saved);
-        } catch(e) {}
-
-        if (lastEntry) {
-            // Se encontrou dados salvos, preenche tudo com eles
-            document.getElementById('hour-flow').value = lastEntry.flow || 'income';
-            
-            // Se você filtrou por um botão específico (ex: João), ele prioriza o João. Se não, pega o último.
-            if (currentEmployeeFilter !== 'todos') {
-                document.getElementById('hour-employee').value = currentEmployeeFilter;
-            } else {
-                document.getElementById('hour-employee').value = lastEntry.employee || '';
-            }
-            
-            document.getElementById('hour-date').value = lastEntry.date || todayISO();
-            document.getElementById('hour-qty').value = lastEntry.hours || '';
-            document.getElementById('hour-rate').value = lastEntry.rate || '';
-            document.getElementById('hour-notes').value = lastEntry.notes || '';
-            document.getElementById('hour-time-in').value = lastEntry.timeIn || '';
-            document.getElementById('hour-time-out').value = lastEntry.timeOut || '';
-            document.getElementById('hour-lunch-start').value = lastEntry.lunchStart || '';
-            document.getElementById('hour-lunch-end').value = lastEntry.lunchEnd || '';
-            document.getElementById('hour-coffee').value = lastEntry.coffee || '';
-        } else {
-            // Se for a primeira vez usando o app, deixa padrão/vazio
-            document.getElementById('hour-flow').value = 'income';
-            document.getElementById('hour-employee').value = currentEmployeeFilter !== 'todos' ? currentEmployeeFilter : '';
-            document.getElementById('hour-date').value = todayISO();
-            document.getElementById('hour-qty').value = '';
-            document.getElementById('hour-rate').value = '';
-            document.getElementById('hour-notes').value = '';
-            document.getElementById('hour-time-in').value = '';
-            document.getElementById('hour-time-out').value = '';
-            document.getElementById('hour-lunch-start').value = '';
-            document.getElementById('hour-lunch-end').value = '';
-            document.getElementById('hour-coffee').value = '';
-        }
-
-        updateHourLiveTotal();
-        document.getElementById('hour-form-title').textContent = '➕ Registrar Horas';
-        document.getElementById('btn-save-hour').textContent = 'Salvar Horas';
-        document.getElementById('btn-cancel-hour').style.display = 'none';
-        document.getElementById('hour-form-accordion').open = false;
-    }
+    const h = allWorkHours.find(x => x.id === id);
+    if (!h) return;
+    switchTab('horas');
     
+    document.getElementById('hour-modal').style.display = 'flex'; // MODIFICADO
+    
+    document.getElementById('hour-flow').value = h.flow || 'income'; 
+    document.getElementById('hour-employee').value = h.employee || 'Geral';
+    document.getElementById('hour-date').value = h.date;
+    document.getElementById('hour-qty').value = h.hours;
+    document.getElementById('hour-rate').value = h.hourlyRate;
+    document.getElementById('hour-notes').value = h.notes || '';
+    document.getElementById('hour-time-in').value = h.timeIn || '';
+    document.getElementById('hour-time-out').value = h.timeOut || '';
+    document.getElementById('hour-lunch-start').value = h.lunchStart || '';
+    document.getElementById('hour-lunch-end').value = h.lunchEnd || '';
+    document.getElementById('hour-coffee').value = h.coffee || '';
+
+    updateHourLiveTotal();
+    editingHourId = id;
+    document.getElementById('hour-form-title').textContent = '✏️ Editando Horas';
+    document.getElementById('btn-save-hour').textContent = 'Atualizar';
+    document.getElementById('btn-cancel-hour').style.display = 'flex';
+}
+
+function cancelHourEdit() {
+    editingHourId = null;
+    let lastEntry = null;
+    try {
+        const saved = localStorage.getItem('lastWorkHourEntry');
+        if (saved) lastEntry = JSON.parse(saved);
+    } catch(e) {}
+
+    if (lastEntry) {
+        document.getElementById('hour-flow').value = lastEntry.flow || 'income';
+        if (currentEmployeeFilter !== 'todos') {
+            document.getElementById('hour-employee').value = currentEmployeeFilter;
+        } else {
+            document.getElementById('hour-employee').value = lastEntry.employee || '';
+        }
+        document.getElementById('hour-date').value = lastEntry.date || todayISO();
+        document.getElementById('hour-qty').value = lastEntry.hours || '';
+        document.getElementById('hour-rate').value = lastEntry.rate || '';
+        document.getElementById('hour-notes').value = lastEntry.notes || '';
+        document.getElementById('hour-time-in').value = lastEntry.timeIn || '';
+        document.getElementById('hour-time-out').value = lastEntry.timeOut || '';
+        document.getElementById('hour-lunch-start').value = lastEntry.lunchStart || '';
+        document.getElementById('hour-lunch-end').value = lastEntry.lunchEnd || '';
+        document.getElementById('hour-coffee').value = lastEntry.coffee || '';
+    } else {
+        document.getElementById('hour-flow').value = 'income';
+        document.getElementById('hour-employee').value = currentEmployeeFilter !== 'todos' ? currentEmployeeFilter : '';
+        document.getElementById('hour-date').value = todayISO();
+        document.getElementById('hour-qty').value = '';
+        document.getElementById('hour-rate').value = '';
+        document.getElementById('hour-notes').value = '';
+        document.getElementById('hour-time-in').value = '';
+        document.getElementById('hour-time-out').value = '';
+        document.getElementById('hour-lunch-start').value = '';
+        document.getElementById('hour-lunch-end').value = '';
+        document.getElementById('hour-coffee').value = '';
+    }
+
+    updateHourLiveTotal();
+    document.getElementById('hour-form-title').textContent = '➕ Registrar Horas';
+    document.getElementById('btn-save-hour').textContent = 'Salvar Horas';
+    document.getElementById('btn-cancel-hour').style.display = 'none';
+    
+    document.getElementById('hour-modal').style.display = 'none'; // MODIFICADO
+}
+
     function renderHourRowHTML(h) {
         // Verifica se é despesa para mudar a cor e o sinal (- vermelho, + verde)
         const isExpense = h.flow === 'expense';
@@ -1479,54 +1474,53 @@ async function saveProduct() {
         } catch (err) { console.error(err); showToast('Erro ao salvar produto.', 'error'); }
     }
 
-function editProduct(id) {
-        const p = allProducts.find(x => x.id === id);
-        if (!p) return;
-        switchTab('produtos');
-        document.getElementById('product-form-accordion').open = true;
-        document.getElementById('product-name').value = p.name;
-        document.getElementById('product-category').value = p.category;
-        document.getElementById('product-unit').value = p.unit || 'un';
-        document.getElementById('product-qty').value = p.quantity;
-        document.getElementById('product-cost').value = p.costPrice;
-        document.getElementById('product-margin').value = p.marginPercent || 0;
-        document.getElementById('product-price').value = p.salePrice;
-        
-        // <-- Trazendo a observação de volta para a tela ao editar
-        document.getElementById('product-notes').value = p.notes || ''; 
 
-        const hasMovements = productHasMovements(id);
-        document.getElementById('product-qty').disabled = hasMovements;
-        document.getElementById('product-cost').disabled = hasMovements;
-        document.getElementById('product-qty-note').style.display = hasMovements ? 'block' : 'none';
+    function editProduct(id) {
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+    switchTab('produtos');
+    
+    document.getElementById('product-modal').style.display = 'flex'; // MODIFICADO
+    
+    document.getElementById('product-name').value = p.name;
+    document.getElementById('product-category').value = p.category;
+    document.getElementById('product-unit').value = p.unit || 'un';
+    document.getElementById('product-qty').value = p.quantity;
+    document.getElementById('product-cost').value = p.costPrice;
+    document.getElementById('product-margin').value = p.marginPercent || 0;
+    document.getElementById('product-price').value = p.salePrice;
+    document.getElementById('product-notes').value = p.notes || ''; 
 
-        editingProductId = id;
-        document.getElementById('product-form-title').textContent = '✏️ Editando Produto';
-        document.getElementById('btn-save-product').textContent = 'Atualizar';
-        document.getElementById('btn-cancel-product').style.display = 'flex';
-    }
+    const hasMovements = productHasMovements(id);
+    document.getElementById('product-qty').disabled = hasMovements;
+    document.getElementById('product-cost').disabled = hasMovements;
+    document.getElementById('product-qty-note').style.display = hasMovements ? 'block' : 'none';
+
+    editingProductId = id;
+    document.getElementById('product-form-title').textContent = '✏️ Editando Produto';
+    document.getElementById('btn-save-product').textContent = 'Atualizar';
+    document.getElementById('btn-cancel-product').style.display = 'flex';
+}
 
 function cancelProductEdit() {
-        editingProductId = null;
-        document.getElementById('product-name').value = '';
-        document.getElementById('product-category').value = '';
-        document.getElementById('product-unit').value = '';
-        document.getElementById('product-qty').value = '';
-        document.getElementById('product-cost').value = '';
-        document.getElementById('product-margin').value = '';
-        document.getElementById('product-price').value = '';
-        
-        // <-- Limpando o campo de observação
-        document.getElementById('product-notes').value = ''; 
-        
-        document.getElementById('product-qty').disabled = false;
-        document.getElementById('product-cost').disabled = false;
-        document.getElementById('product-qty-note').style.display = 'none';
-        document.getElementById('product-form-title').textContent = '➕ Novo Produto';
-        document.getElementById('btn-save-product').textContent = 'Salvar Produto';
-        document.getElementById('btn-cancel-product').style.display = 'none';
-        document.getElementById('product-form-accordion').open = false;
-    }
+    editingProductId = null;
+    document.getElementById('product-name').value = '';
+    document.getElementById('product-category').value = '';
+    document.getElementById('product-unit').value = '';
+    document.getElementById('product-qty').value = '';
+    document.getElementById('product-cost').value = '';
+    document.getElementById('product-margin').value = '';
+    document.getElementById('product-price').value = '';
+    document.getElementById('product-notes').value = ''; 
+    document.getElementById('product-qty').disabled = false;
+    document.getElementById('product-cost').disabled = false;
+    document.getElementById('product-qty-note').style.display = 'none';
+    document.getElementById('product-form-title').textContent = '➕ Novo Produto';
+    document.getElementById('btn-save-product').textContent = 'Salvar Produto';
+    document.getElementById('btn-cancel-product').style.display = 'none';
+    
+    document.getElementById('product-modal').style.display = 'none'; // MODIFICADO
+}
 
     async function deleteProduct(id) {
         const p = allProducts.find(x => x.id === id);
@@ -1970,47 +1964,51 @@ function cancelProductEdit() {
         } catch (err) { console.error(err); showToast('Erro ao salvar a ficha técnica.', 'error'); }
     }
 
-    function editRecipe(id) {
-        const r = allRecipes.find(x => x.id === id);
-        if (!r) return;
-        switchTab('producao');
-        document.getElementById('recipe-form-accordion').open = true;
-        document.getElementById('recipe-name').value = r.name;
-        document.getElementById('recipe-category').value = r.category;
-        document.getElementById('recipe-yield-qty').value = r.yieldQuantity;
-        document.getElementById('recipe-yield-unit').value = r.yieldUnit;
-        document.getElementById('recipe-extra-cost').value = r.extraCost;
-        document.getElementById('recipe-margin').value = r.marginPercent;
-        document.getElementById('recipe-notes').value = r.notes || '';
-        currentRecipeIngredients = r.ingredients.map(i => {
-            const product = allProducts.find(p => p.id === i.productId);
-            return { productId: i.productId, productName: product ? product.name : '', quantity: i.quantity };
-        });
-        renderIngredientRows();
-        editingRecipeId = id;
-        document.getElementById('recipe-form-title').textContent = '✏️ Editando Ficha Técnica';
-        document.getElementById('btn-save-recipe').textContent = 'Atualizar Ficha Técnica';
-        document.getElementById('btn-cancel-recipe').style.display = 'flex';
-        document.getElementById('recipe-edit-note').style.display = 'block';
-    }
 
-    function cancelRecipeEdit() {
-        editingRecipeId = null;
-        document.getElementById('recipe-name').value = '';
-        document.getElementById('recipe-category').value = '';
-        document.getElementById('recipe-yield-qty').value = '';
-        document.getElementById('recipe-yield-unit').value = '';
-        document.getElementById('recipe-extra-cost').value = '';
-        document.getElementById('recipe-margin').value = '';
-        document.getElementById('recipe-notes').value = '';
-        currentRecipeIngredients = [];
-        renderIngredientRows();
-        document.getElementById('recipe-form-title').textContent = '➕ Nova Ficha Técnica';
-        document.getElementById('btn-save-recipe').textContent = 'Salvar e Produzir';
-        document.getElementById('btn-cancel-recipe').style.display = 'none';
-        document.getElementById('recipe-edit-note').style.display = 'none';
-        document.getElementById('recipe-form-accordion').open = false;
-    }
+    function editRecipe(id) {
+    const r = allRecipes.find(x => x.id === id);
+    if (!r) return;
+    switchTab('producao');
+    
+    document.getElementById('recipe-modal').style.display = 'flex'; // MODIFICADO
+    
+    document.getElementById('recipe-name').value = r.name;
+    document.getElementById('recipe-category').value = r.category;
+    document.getElementById('recipe-yield-qty').value = r.yieldQuantity;
+    document.getElementById('recipe-yield-unit').value = r.yieldUnit;
+    document.getElementById('recipe-extra-cost').value = r.extraCost;
+    document.getElementById('recipe-margin').value = r.marginPercent;
+    document.getElementById('recipe-notes').value = r.notes || '';
+    currentRecipeIngredients = r.ingredients.map(i => {
+        const product = allProducts.find(p => p.id === i.productId);
+        return { productId: i.productId, productName: product ? product.name : '', quantity: i.quantity };
+    });
+    renderIngredientRows();
+    editingRecipeId = id;
+    document.getElementById('recipe-form-title').textContent = '✏️ Editando Ficha Técnica';
+    document.getElementById('btn-save-recipe').textContent = 'Atualizar Ficha Técnica';
+    document.getElementById('btn-cancel-recipe').style.display = 'flex';
+    document.getElementById('recipe-edit-note').style.display = 'block';
+}
+
+function cancelRecipeEdit() {
+    editingRecipeId = null;
+    document.getElementById('recipe-name').value = '';
+    document.getElementById('recipe-category').value = '';
+    document.getElementById('recipe-yield-qty').value = '';
+    document.getElementById('recipe-yield-unit').value = '';
+    document.getElementById('recipe-extra-cost').value = '';
+    document.getElementById('recipe-margin').value = '';
+    document.getElementById('recipe-notes').value = '';
+    currentRecipeIngredients = [];
+    renderIngredientRows();
+    document.getElementById('recipe-form-title').textContent = '➕ Nova Ficha Técnica';
+    document.getElementById('btn-save-recipe').textContent = 'Salvar e Produzir';
+    document.getElementById('btn-cancel-recipe').style.display = 'none';
+    document.getElementById('recipe-edit-note').style.display = 'none';
+    
+    document.getElementById('recipe-modal').style.display = 'none'; // MODIFICADO
+}
 
     async function deleteRecipe(id) {
         const r = allRecipes.find(x => x.id === id);
@@ -2281,65 +2279,59 @@ function cancelProductEdit() {
     }
     
     function editService(id) {
-        const s = allServices.find(x => x.id === id);
-        if (!s) return;
-        switchTab('servicos');
-        document.getElementById('service-form-accordion').open = true;
-        
-        // <-- NOVO: Puxa o tipo (se for antigo e não tiver, vira income por padrão)
-        document.getElementById('service-flow').value = s.flow || 'income'; 
-        
-        document.getElementById('service-name').value = s.name;
-        document.getElementById('service-price').value = s.price;
-        document.getElementById('service-date').value = s.date;
-        document.getElementById('service-client').value = s.client || '';
-        document.getElementById('service-notes').value = s.notes || '';
-        editingServiceId = id;
-        document.getElementById('service-form-title').textContent = '✏️ Editando Serviço';
-        document.getElementById('btn-save-service').textContent = 'Atualizar';
-        document.getElementById('btn-cancel-service').style.display = 'flex';
-    }
+    const s = allServices.find(x => x.id === id);
+    if (!s) return;
+    switchTab('servicos');
+    
+    document.getElementById('service-modal').style.display = 'flex'; // MODIFICADO
+    
+    document.getElementById('service-flow').value = s.flow || 'income'; 
+    document.getElementById('service-name').value = s.name;
+    document.getElementById('service-price').value = s.price;
+    document.getElementById('service-date').value = s.date;
+    document.getElementById('service-client').value = s.client || '';
+    document.getElementById('service-notes').value = s.notes || '';
+    editingServiceId = id;
+    document.getElementById('service-form-title').textContent = '✏️ Editando Serviço';
+    document.getElementById('btn-save-service').textContent = 'Atualizar';
+    document.getElementById('btn-cancel-service').style.display = 'flex';
+}
 
 function cancelServiceEdit() {
-        editingServiceId = null;
-        
-        // ==== NOVIDADE: Tenta buscar o último preenchimento da memória ====
-        let lastEntry = null;
-        try {
-            const saved = localStorage.getItem('lastServiceEntry');
-            if (saved) lastEntry = JSON.parse(saved);
-        } catch(e) {}
+    editingServiceId = null;
+    let lastEntry = null;
+    try {
+        const saved = localStorage.getItem('lastServiceEntry');
+        if (saved) lastEntry = JSON.parse(saved);
+    } catch(e) {}
 
-        if (lastEntry) {
-            // Se encontrou dados salvos, preenche o formulário com eles
-            document.getElementById('service-flow').value = lastEntry.flow || 'income';
-            
-            // Prioriza o filtro de cliente clicado no botão. Se não, pega o da memória.
-            if (typeof currentClientFilter !== 'undefined' && currentClientFilter !== 'todos') {
-                document.getElementById('service-client').value = currentClientFilter;
-            } else {
-                document.getElementById('service-client').value = lastEntry.client || '';
-            }
-            
-            document.getElementById('service-name').value = lastEntry.name || '';
-            document.getElementById('service-price').value = lastEntry.price || '';
-            document.getElementById('service-date').value = lastEntry.date || todayISO();
-            document.getElementById('service-notes').value = lastEntry.notes || '';
+    if (lastEntry) {
+        document.getElementById('service-flow').value = lastEntry.flow || 'income';
+        if (typeof currentClientFilter !== 'undefined' && currentClientFilter !== 'todos') {
+            document.getElementById('service-client').value = currentClientFilter;
         } else {
-            // Se for a primeira vez usando, limpa tudo normalmente
-            document.getElementById('service-flow').value = 'income';
-            document.getElementById('service-name').value = '';
-            document.getElementById('service-price').value = '';
-            document.getElementById('service-date').value = todayISO();
-            document.getElementById('service-client').value = (typeof currentClientFilter !== 'undefined' && currentClientFilter !== 'todos') ? currentClientFilter : '';
-            document.getElementById('service-notes').value = '';
+            document.getElementById('service-client').value = lastEntry.client || '';
         }
-
-        document.getElementById('service-form-title').textContent = '➕ Registrar Serviço';
-        document.getElementById('btn-save-service').textContent = 'Salvar Serviço';
-        document.getElementById('btn-cancel-service').style.display = 'none';
-        document.getElementById('service-form-accordion').open = false;
+        document.getElementById('service-name').value = lastEntry.name || '';
+        document.getElementById('service-price').value = lastEntry.price || '';
+        document.getElementById('service-date').value = lastEntry.date || todayISO();
+        document.getElementById('service-notes').value = lastEntry.notes || '';
+    } else {
+        document.getElementById('service-flow').value = 'income';
+        document.getElementById('service-name').value = '';
+        document.getElementById('service-price').value = '';
+        document.getElementById('service-date').value = todayISO();
+        document.getElementById('service-client').value = (typeof currentClientFilter !== 'undefined' && currentClientFilter !== 'todos') ? currentClientFilter : '';
+        document.getElementById('service-notes').value = '';
     }
+
+    document.getElementById('service-form-title').textContent = '➕ Registrar Serviço';
+    document.getElementById('btn-save-service').textContent = 'Salvar Serviço';
+    document.getElementById('btn-cancel-service').style.display = 'none';
+    
+    document.getElementById('service-modal').style.display = 'none'; // MODIFICADO
+}
+    
     async function deleteService(id) {
         if (!confirm('Deseja excluir este serviço?')) return;
         await runTx(['services'], 'readwrite', (tx) => tx.objectStore('services').delete(id));
@@ -2547,28 +2539,31 @@ function exportFilteredServices(format) {
         } catch (err) { console.error(err); showToast('Erro ao salvar ajuste.', 'error'); }
     }
 
-    function editAdjustment(id) {
-        const a = allAdjustments.find(x => x.id === id);
-        if (!a) return;
-        switchTab('historico');
-        document.getElementById('adjustment-form-accordion').open = true;
-        document.getElementById('adjustment-desc').value = a.description;
-        document.getElementById('adjustment-amount').value = a.amount;
-        document.getElementById('adjustment-date').value = a.date;
-        editingAdjustmentId = id;
-        document.getElementById('btn-save-adjustment').textContent = 'Atualizar';
-        document.getElementById('btn-cancel-adjustment').style.display = 'flex';
-    }
+function editAdjustment(id) {
+    const a = allAdjustments.find(x => x.id === id);
+    if (!a) return;
+    switchTab('historico');
+    
+    document.getElementById('adjustment-modal').style.display = 'flex'; // MODIFICADO
+    
+    document.getElementById('adjustment-desc').value = a.description;
+    document.getElementById('adjustment-amount').value = a.amount;
+    document.getElementById('adjustment-date').value = a.date;
+    editingAdjustmentId = id;
+    document.getElementById('btn-save-adjustment').textContent = 'Atualizar';
+    document.getElementById('btn-cancel-adjustment').style.display = 'flex';
+}
 
-    function cancelAdjustmentEdit() {
-        editingAdjustmentId = null;
-        document.getElementById('adjustment-desc').value = '';
-        document.getElementById('adjustment-amount').value = '';
-        document.getElementById('adjustment-date').value = todayISO();
-        document.getElementById('btn-save-adjustment').textContent = 'Salvar Ajuste';
-        document.getElementById('btn-cancel-adjustment').style.display = 'none';
-        document.getElementById('adjustment-form-accordion').open = false;
-    }
+function cancelAdjustmentEdit() {
+    editingAdjustmentId = null;
+    document.getElementById('adjustment-desc').value = '';
+    document.getElementById('adjustment-amount').value = '';
+    document.getElementById('adjustment-date').value = todayISO();
+    document.getElementById('btn-save-adjustment').textContent = 'Salvar Ajuste';
+    document.getElementById('btn-cancel-adjustment').style.display = 'none';
+    
+    document.getElementById('adjustment-modal').style.display = 'none'; // MODIFICADO
+}
 
     async function deleteAdjustment(id) {
         if (!confirm('Deseja excluir este ajuste?')) return;
